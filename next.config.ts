@@ -20,7 +20,7 @@ const nextConfig = {
     "puppeteer-extra-plugin-stealth",
   ],
   images: {
-    domains: ['i.ytimg.com'], // Add the hostname here
+    domains: ['i.ytimg.com','d3njjcbhbojbot.cloudfront.net','img-c.udemycdn.com'], 
   },
 };
 

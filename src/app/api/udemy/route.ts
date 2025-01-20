@@ -25,7 +25,7 @@ interface ApiError {
 // Constants
 const SELECTORS = {
   courseCard: ".course-card-module--container--3oS-F",
-  title: ".course-card-title-module--course-title--wmFXN",
+  title: ".course-card-title-module--title--W49Ap",
   description: ".course-card-module--course-headline--v-7gj",
   rating: ".star-rating-module--rating-number--2-qA2",
   image: ".course-card-image-module--image--dfkFe"
@@ -105,22 +105,35 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
     });
 
     // Extract course data
-    const courses: CourseData[] = await page.evaluate((selectors) => {
-      return Array.from(document.querySelectorAll<HTMLElement>(selectors.courseCard))
-        .slice(0, 10) // Limit to first 20 results for performance
-        .map(card => {
-          const link = card.querySelector('a')?.getAttribute('href');
-          
-          return {
-            name: card.querySelector(selectors.title)?.textContent?.trim() || '',
-            description: card.querySelector(selectors.description)?.textContent?.trim() || '',
-            rating: parseFloat(card.querySelector(selectors.rating)?.textContent?.trim() || '0'),
-            thumbnail: card.querySelector(selectors.image)?.getAttribute('src') || '',
-            registrationLink: link ? `https://www.udemy.com${link}` : null
-          };
-        })
-        .filter(course => course.name && course.rating >= 4.5); // Filter invalid entries
-    }, SELECTORS);
+
+// Inside the `page.evaluate` function
+const courses: CourseData[] = await page.evaluate((selectors) => {
+  return Array.from(document.querySelectorAll<HTMLElement>(selectors.courseCard))
+    .slice(0, 10) // Limit to first 10 results for performance
+    .map(card => {
+      // Extract the first inner text of the <a> tag
+      const linkElement = card.querySelector('a') as HTMLElement | null;
+      const fullText = linkElement?.textContent?.trim() || '';
+
+      
+      const name = fullText.split('<')[0].trim();
+
+      // Extract other details
+      const link = linkElement?.getAttribute('href');
+      const description = card.querySelector(selectors.description)?.textContent?.trim() || '';
+      const rating = parseFloat(card.querySelector(selectors.rating)?.textContent?.trim() || '0');
+      const thumbnail = card.querySelector(selectors.image)?.getAttribute('src') || '';
+
+      return {
+        name, 
+        description,
+        rating,
+        thumbnail,
+        registrationLink: link ? `https://www.udemy.com${link}` : null
+      };
+    })
+    .filter(course => course.name && course.rating >= 4.5); // Filter invalid entries
+}, SELECTORS);
 
     return NextResponse.json({
       courses,

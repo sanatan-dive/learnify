@@ -44,8 +44,8 @@ export default function LandingPage() {
     <div className="min-h-screen flex flex-col gap-8 justify-center items-center">
       {isLoading ? (
         <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-          <p className="text-lg">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-400"></div>
+          <p className="text-lg text-white">Loading...</p>
         </div>
       ) : (
         <>
@@ -61,22 +61,22 @@ export default function LandingPage() {
                   <YouTubePlaylist playlists={responses.youtube?.playlists || []} />
                 </div>
                   {/* Display Coursera Courses */}
-               {/* <div className="flex flex-col">
+               <div className="flex flex-col">
                <div className="mt-4">
                   <h3 className="text-xl text-white font-semibold mb-4">
                     Coursera Courses
                   </h3>
                   <CourseraCourses courses={responses.coursera?.courses || []} />
-                </div> */}
+                </div>
 
                 {/* Display Udemy Courses */}
-                {/* <div className="mt-4">
+                <div className="mt-4">
                   <h3 className="text-xl text-white font-semibold mb-4">
                     Udemy Courses
                   </h3>
                   <UdemyCourses courses={responses.udemy?.courses || []} />
                 </div>
-               </div> */}
+               </div>
                 {/* Display Medium Blogs */}
                 {/* <div className="mt-4">
                   <h3 className="text-xl text-white font-semibold mb-4">

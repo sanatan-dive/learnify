@@ -7,6 +7,10 @@ export interface Blog {
   export interface Course {
     name: string;
     registrationLink: string;
+    description: string;
+    rating: number;
+    thumbnail: string;
+    workload: string;
   }
   
   export interface Playlist {

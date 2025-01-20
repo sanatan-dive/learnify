@@ -22,7 +22,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
   }
 
   // Determine the number of playlists to display
-  const displayedPlaylists = showAll ? playlists : playlists.slice(0, 3);
+  const displayedPlaylists = showAll ? playlists : playlists.slice(0, 5);
 
   return (
     <div className="space-y-4">
