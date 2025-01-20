@@ -67,7 +67,9 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
 
     // Initialize puppeteer with our utility
     const puppeteer = setupPuppeteer();
-    //@ts-expect-error
+    // @ts-expect-error: Ignoring type error due to dynamic import issue
+
+
     browser = await puppeteer.launch(BROWSER_CONFIG);
     const page = await browser.newPage();
     
