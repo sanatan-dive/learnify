@@ -8,10 +8,12 @@ export function PlaceholdersAndVanishInput({
   placeholders,
   onChange,
   onSubmit,
+  disabled
 }: {
   placeholders: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  disabled?: boolean
 }) {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
 
@@ -177,7 +179,7 @@ export function PlaceholdersAndVanishInput({
   return (
     <form
       className={cn(
-        "w-full relative max-w-xl mx-auto bg-[#242328] border-[#898498] border-2 text-white dark:bg-zinc-800 h-12 rounded-full overflow-hidden shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200",
+        "w-full relative max-w-xl mx-auto bg-[#242328] border-[#898498] border-2 text-bold text-white dark:bg-zinc-800 h-12 rounded-full overflow-hidden shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200",
         value && "bg-[#bcb7d0] "
       )}
       onSubmit={handleSubmit}
@@ -201,8 +203,8 @@ export function PlaceholdersAndVanishInput({
         value={value}
         type="text"
         className={cn(
-          "w-full relative text-sm sm:text-base  z-50  dark:text-white bg-transparent text-stone-900 h-full rounded-full focus:outline-none focus:ring-0 pl-4 sm:pl-10 pr-20",
-          animating && "text-transparent  dark:text-transparent"
+          "w-full relative text-sm text-xl z-50  dark:text-white bg-transparent text-stone-900 h-full rounded-full focus:outline-none focus:ring-0 pl-4 sm:pl-10 pr-20",
+          animating && "text-transparent dark:text-transparent"
         )}
       />
 

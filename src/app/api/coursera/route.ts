@@ -15,7 +15,7 @@ export async function GET(request: Request) {
         q: "search",
         query: `${query} free`, 
         includes: "instructorIds,partnerIds",
-        limit: 1, 
+        limit: 10, 
         fields: "name,description,workload,instructorIds,partnerIds,photoUrl,slug",
       },
       headers: {

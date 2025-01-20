@@ -107,7 +107,7 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
     // Extract course data
     const courses: CourseData[] = await page.evaluate((selectors) => {
       return Array.from(document.querySelectorAll<HTMLElement>(selectors.courseCard))
-        .slice(0, 20) // Limit to first 20 results for performance
+        .slice(0, 10) // Limit to first 20 results for performance
         .map(card => {
           const link = card.querySelector('a')?.getAttribute('href');
           
