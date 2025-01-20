@@ -21,8 +21,8 @@ interface ApiError {
 }
 
 // YouTube Data API configuration
-const YOUTUBE_API_KEY = "AIzaSyD0mbv23Z-Snv6c4j2i0xTGDTUhjUz3Hgw"; // Replace with your YouTube API key
-const YOUTUBE_API_URL = "https://www.googleapis.com/youtube/v3/search";
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || "";
+const YOUTUBE_API_URL = process.env.YOUTUBE_API_URL || "https://www.googleapis.com/youtube/v3/search";
 
 export async function GET(request: Request): Promise<NextResponse<ApiResponse | ApiError>> {
   try {

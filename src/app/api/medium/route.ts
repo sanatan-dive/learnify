@@ -3,16 +3,15 @@ import { setupPuppeteer } from '@/utils/puppeteer';
 import type { Page, Browser } from 'puppeteer';
 
 // Types for better type safety
-interface CourseData {
-  name: string;
-  description: string;
-  rating: number;
-  thumbnail: string;
-  registrationLink: string | null;
+interface BlogData {
+  title: string;
+  link: string | null;
+  author: string | null;
+  description: string | null;
 }
 
 interface ApiResponse {
-  courses: CourseData[];
+  blogs: BlogData[];
   timestamp: string;
   query: string;
 }
@@ -21,15 +20,6 @@ interface ApiError {
   error: string;
   details?: string;
 }
-
-// Constants
-const SELECTORS = {
-  courseCard: ".course-card-module--container--3oS-F",
-  title: ".course-card-title-module--course-title--wmFXN",
-  description: ".course-card-module--course-headline--v-7gj",
-  rating: ".star-rating-module--rating-number--2-qA2",
-  image: ".course-card-image-module--image--dfkFe"
-} as const;
 
 const BROWSER_CONFIG = {
   headless: "new" as const, // Use new headless mode for better performance
@@ -85,10 +75,10 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
     await setupPage(page);
 
     // Construct search URL with encoding
-    const searchUrl = `https://www.udemy.com/courses/search/?price=price-free&q=${encodeURIComponent(query)}+free&ratings=4.5&sort=relevance&src=ukw`;
+    const url = `https://medium.com/search?q=${encodeURIComponent(query)}+roadmap`; ;
     
     // Navigate with proper error handling
-    const response = await page.goto(searchUrl, {
+    const response = await page.goto(url, {
       waitUntil: 'networkidle2',
       timeout: 30000
     });
@@ -97,31 +87,33 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       throw new Error(`Failed to load page: ${response?.status()}`);
     }
 
-    // Wait for content with timeout
-    await page.waitForSelector(SELECTORS.courseCard, {
-      timeout: 15000
+    await page.waitForSelector('.bh.l');
+
+    const blogs = await page.evaluate(() => {
+      const blogElements = document.querySelectorAll('.bh.l');
+      const blogData: BlogData[] = [];
+      
+      // Only loop through the first 10 blogs
+      for (let i = 0; i < Math.min(10, blogElements.length); i++) {
+        const blog = blogElements[i];
+        const title = blog.querySelector('h2')?.innerText || null;
+        const link = (blog.querySelector('a.af.ag.ah.ai.aj.ak.al.am.an.ao.ap.aq.ar.as.at[href^="/@"]') as HTMLAnchorElement)?.href || null;
+        const author = (blog.querySelector('a[rel="noopener follow"] > p') as HTMLTextAreaElement)?.innerText || null;
+        const description = blog.querySelector('h3')?.innerText || null;
+    
+        if (title && link && author && description) {
+          blogData.push({ title, link, author, description });
+        }
+      }
+      
+      return blogData;
     });
-
-    // Extract course data
-    const courses: CourseData[] = await page.evaluate((selectors) => {
-      return Array.from(document.querySelectorAll<HTMLElement>(selectors.courseCard))
-        .slice(0, 20) // Limit to first 20 results for performance
-        .map(card => {
-          const link = card.querySelector('a')?.getAttribute('href');
-          
-          return {
-            name: card.querySelector(selectors.title)?.textContent?.trim() || '',
-            description: card.querySelector(selectors.description)?.textContent?.trim() || '',
-            rating: parseFloat(card.querySelector(selectors.rating)?.textContent?.trim() || '0'),
-            thumbnail: card.querySelector(selectors.image)?.getAttribute('src') || '',
-            registrationLink: link ? `https://www.udemy.com${link}` : null
-          };
-        })
-        .filter(course => course.name && course.rating >= 4.5); // Filter invalid entries
-    }, SELECTORS);
-
+    
+  
+    await browser.close();
+  
     return NextResponse.json({
-      courses,
+      blogs,
       timestamp: new Date().toISOString(),
       query
     });
@@ -131,7 +123,7 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
     
     return NextResponse.json(
       {
-        error: 'Failed to fetch courses',
+        error: 'Failed to fetch blogs',
         details: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined
       },
       { status: 500 }
