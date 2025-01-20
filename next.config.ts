@@ -1,7 +1,24 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  //@ts-ignore
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals = [
+        ...(config.externals || []),
+        "puppeteer",
+        "puppeteer-extra",
+        "puppeteer-extra-plugin-stealth",
+      ];
+    }
+    return config;
+  },
+  // Use `serverExternalPackages` instead of `experimental.serverComponentsExternalPackages`
+  serverExternalPackages: [
+    "puppeteer-core",
+    "puppeteer",
+    "puppeteer-extra",
+    "puppeteer-extra-plugin-stealth",
+  ],
 };
 
-export default nextConfig;
+module.exports = nextConfig;
