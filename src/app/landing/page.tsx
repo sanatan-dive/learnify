@@ -49,9 +49,7 @@ export default function LandingPage() {
         </div>
       ) : (
         <>
-          <h1 className="text-4xl text-white font-bold">Landing Page</h1>
-          <p className="text-white text-lg">Query: {query}</p>
-          <h2 className="text-2xl text-white font-semibold">API Responses:</h2>
+      
           <div className="mt-8 w-full flex gap-8 max-w-4xl">
             {responses && (
               <>
@@ -63,29 +61,29 @@ export default function LandingPage() {
                   <YouTubePlaylist playlists={responses.youtube?.playlists || []} />
                 </div>
                   {/* Display Coursera Courses */}
-               <div className="flex flex-col">
+               {/* <div className="flex flex-col">
                <div className="mt-4">
                   <h3 className="text-xl text-white font-semibold mb-4">
                     Coursera Courses
                   </h3>
                   <CourseraCourses courses={responses.coursera?.courses || []} />
-                </div>
+                </div> */}
 
                 {/* Display Udemy Courses */}
-                <div className="mt-4">
+                {/* <div className="mt-4">
                   <h3 className="text-xl text-white font-semibold mb-4">
                     Udemy Courses
                   </h3>
                   <UdemyCourses courses={responses.udemy?.courses || []} />
                 </div>
-               </div>
+               </div> */}
                 {/* Display Medium Blogs */}
-                <div className="mt-4">
+                {/* <div className="mt-4">
                   <h3 className="text-xl text-white font-semibold mb-4">
                     Medium Blogs
                   </h3>
                   <MediumBlogs blogs={responses.medium?.blogs || []} />
-                </div>
+                </div> */}
 
                 
               </>

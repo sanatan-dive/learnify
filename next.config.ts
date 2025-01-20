@@ -19,6 +19,9 @@ const nextConfig = {
     "puppeteer-extra",
     "puppeteer-extra-plugin-stealth",
   ],
+  images: {
+    domains: ['i.ytimg.com'], // Add the hostname here
+  },
 };
 
 module.exports = nextConfig;

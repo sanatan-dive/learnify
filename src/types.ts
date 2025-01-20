@@ -6,12 +6,14 @@ export interface Blog {
   
   export interface Course {
     name: string;
-    link: string;
+    registrationLink: string;
   }
   
   export interface Playlist {
     title: string;
-    url: string;
+    link: string;
+    thumbnail: string;
+    channel: string;
   }
   
   export interface ApiResponse {
