@@ -2,6 +2,9 @@
 export interface Blog {
     title: string;
     link: string;
+    author?: string;
+    description?: string;
+    
   }
   
   export interface Course {

@@ -2,7 +2,7 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import { Star } from "lucide-react"; // Import star icon
+import { Star } from "lucide-react";
 
 interface CourseraCoursesProps {
   courses: {
@@ -16,19 +16,17 @@ interface CourseraCoursesProps {
 }
 
 export default function CourseraCourses({ courses }: CourseraCoursesProps) {
-  const [showAll, setShowAll] = useState(false); // State to manage expanded view
+  const [showAll, setShowAll] = useState(false);
   const [expandedDescriptions, setExpandedDescriptions] = useState<{
     [key: number]: boolean;
-  }>({}); // State to manage expanded descriptions
+  }>({});
 
   if (!courses || courses.length === 0) {
     return <p className="text-white">No courses available.</p>;
   }
 
-  // Determine the number of courses to display
   const displayedCourses = showAll ? courses : courses.slice(0, 2);
 
-  // Function to truncate description to 100 words
   const truncateDescription = (description: string, wordLimit: number) => {
     const words = description.split(" ");
     if (words.length > wordLimit) {
@@ -37,7 +35,6 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
     return description;
   };
 
-  // Function to toggle description expansion
   const toggleDescription = (index: number) => {
     setExpandedDescriptions((prev) => ({
       ...prev,
@@ -45,13 +42,11 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
     }));
   };
 
-  // Function to render rating stars with half stars
   const renderRatingStars = (rating: number) => {
     const stars = [];
-    const fullStars = Math.floor(rating); // Number of full stars
-    const hasHalfStar = rating % 1 !== 0; // Check if there's a half star
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
 
-    // Render full stars
     for (let i = 1; i <= fullStars; i++) {
       stars.push(
         <Star
@@ -61,7 +56,6 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
       );
     }
 
-    // Render half star if needed
     if (hasHalfStar) {
       stars.push(
         <div key="half-star" className="relative w-4 h-4">
@@ -74,7 +68,6 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
       );
     }
 
-    // Render empty stars for the remaining
     const remainingStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 1; i <= remainingStars; i++) {
       stars.push(
@@ -89,14 +82,13 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
   };
 
   return (
-    <div className="space-y-3 max-w-xs mx-auto"> {/* Further reduced width */}
+    <div className="space-y-4">
       {displayedCourses.map((course, index) => (
         <div
           key={index}
           className="bg-[#0f0f0f] text-white rounded-lg overflow-hidden shadow-lg"
         >
-          {/* Thumbnail Section */}
-          <div className="relative w-full h-[100px]"> {/* Further reduced height */}
+          <div className="relative w-full h-[150px]">
             <Image
               src={course.thumbnail}
               alt={course.name}
@@ -106,43 +98,36 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
             />
           </div>
 
-          {/* Content Section */}
-          <div className="p-2 space-y-1"> {/* Further reduced padding and spacing */}
-            {/* Course Name */}
-            <h3 className="text-sm font-semibold">{course.name}</h3> {/* Further reduced font size */}
+          <div className="p-4 space-y-2">
+            <h3 className="text-lg font-semibold">{course.name}</h3>
+            <p className="text-sm text-gray-400">{course.workload}</p>
 
-            {/* Workload */}
-            <p className="text-xs text-gray-400">{course.workload}</p> {/* Adjusted font size */}
-
-            {/* Rating Section */}
             <div className="flex items-center gap-1">
               {renderRatingStars(course.rating)}
-              <span className="text-xs text-gray-400">({course.rating})</span>
+              <span className="text-sm text-gray-400">({course.rating})</span>
             </div>
 
-            {/* Course Description */}
-            <p className="text-xs text-gray-300"> {/* Adjusted font size */}
+            <p className="text-sm text-gray-300">
               {expandedDescriptions[index]
                 ? course.description
                 : truncateDescription(course.description, 10)}
             </p>
 
             <div className="flex items-center justify-between">
-              {course.description.split(" ").length > 5 && (
+              {course.description.split(" ").length > 10 && (
                 <button
                   onClick={() => toggleDescription(index)}
-                  className="text-blue-400 hover:text-blue-300 text-xs" // Adjusted font size
+                  className="text-blue-400 hover:text-blue-300 text-sm"
                 >
                   {expandedDescriptions[index] ? "Read Less" : "Read More"}
                 </button>
               )}
 
-              {/* Enroll Now Button */}
               <a
                 href={course.registrationLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block px-2 py-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors text-xs" // Further reduced padding and font size
+                className="inline-block px-4 py-2 bg-gradient-to-r hover:scale-105 transition-transform  from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors text-sm"
               >
                 Enroll Now
               </a>
@@ -151,11 +136,10 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
         </div>
       ))}
 
-      {/* Show "Show More" button if there are more than 3 courses */}
-      {courses.length > 3 && (
+      {courses.length > 2 && (
         <button
           onClick={() => setShowAll(!showAll)}
-          className="mt-3 px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-xs" // Further reduced padding and font size
+          className="mt-4 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors text-sm"
         >
           {showAll ? "Show Less" : "Show More"}
         </button>

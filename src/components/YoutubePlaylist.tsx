@@ -14,14 +14,13 @@ interface YouTubePlaylistProps {
 }
 
 export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
-  const [showAll, setShowAll] = useState(false); // State to manage expanded view
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null); // State to track hovered playlist
+  const [showAll, setShowAll] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   if (!playlists || playlists.length === 0) {
     return <p className="text-white">No playlists available.</p>;
   }
 
-  // Determine the number of playlists to display
   const displayedPlaylists = showAll ? playlists : playlists.slice(0, 5);
 
   return (
@@ -30,11 +29,12 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
         <div
           key={index}
           className="w-full max-w-[600px] bg-[#0f0f0f] text-white flex flex-col md:flex-row rounded-lg overflow-hidden shadow-lg"
-         
         >
-          {/* Thumbnail Section */}
-          <div className="relative flex-shrink-0 w-full md:w-[250px] lg:w-[300px] " onMouseEnter={() => setHoveredIndex(index)} // Set hovered index
-          onMouseLeave={() => setHoveredIndex(null)}  >
+          <div
+            className="relative flex-shrink-0 w-full md:w-[250px] lg:w-[300px]"
+            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseLeave={() => setHoveredIndex(null)}
+          >
             <a
               href={playlist.link}
               target="_blank"
@@ -48,7 +48,6 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
                 height={250}
                 className="w-full h-full object-cover"
               />
-              {/* Hover Overlay */}
               {hoveredIndex === index && (
                 <div className="absolute inset-0 w-full bg-black/70 flex items-center justify-center">
                   <span className="text-white text-lg font-semibold">
@@ -63,8 +62,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
             </div>
           </div>
 
-          {/* Content Section */}
-          <div className="flex-1 p-4 space-y-12">
+          <div className="flex-1 p-4 flex flex-col justify-between">
             <div>
               <h2 className="text-lg font-medium">{playlist.title}</h2>
               <p className="text-sm text-gray-400">{playlist.channel}</p>
@@ -73,7 +71,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
               href={playlist.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block px-4 py-2  bg-gradient-to-r from-red-700 to-pink-700 text-white rounded-lg hover:from-red-700 hover:to-pink-700 transition-colors"
+              className="inline-block px-4 py-2 bg-gradient-to-r from-red-700 to-pink-700 hover:scale-105 transition-transform  text-white rounded-lg hover:from-red-700 hover:to-pink-700 transition-colors"
             >
               Watch Playlist
             </a>
@@ -81,11 +79,10 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
         </div>
       ))}
 
-      {/* Show "Show More" button if there are more than 5 playlists */}
-      {playlists.length > 3 && (
+      {playlists.length > 5 && (
         <button
           onClick={() => setShowAll(!showAll)}
-          className="mt-4 px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-700  to-purple-700 hover:from-pink-600 hover:via-purple-700 hover:to-pink-600  text-white rounded-lg transition-colors"
+          className="mt-4 px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-700 to-purple-700 hover:from-pink-600 hover:via-purple-700 hover:to-pink-600 text-white rounded-lg transition-colors"
         >
           {showAll ? "Show Less" : "Show More"}
         </button>
