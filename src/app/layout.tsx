@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { BackgroundLines } from "@/components/ui/background-lines";
 import {  StarsBackground } from "@/components/ui/stars-background";
 import { ShootingStars } from "@/components/ui/shooting-stars";
-
+import {ClerkProvider} from "@clerk/nextjs";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,20 +25,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* Background div with full-screen styles */}
-        {/* <div className="fixed inset-0 -z-10 h-screen w-screen [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
-         
-        </div> */}
+        
         <ShootingStars  />
         <StarsBackground className="-z-50" />
 
-        {/* Content */}
+     
         {children}
       </body>
     </html>
+    </ClerkProvider>
   );
 }

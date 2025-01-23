@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { setupPuppeteer } from '@/utils/puppeteer';
 import type { Page, Browser } from 'puppeteer';
 
-// Types for better type safety
 interface BlogData {
   title: string;
   link: string | null;
@@ -22,7 +21,7 @@ interface ApiError {
 }
 
 const BROWSER_CONFIG = {
-  headless: "new" as const, // Use new headless mode for better performance
+  headless: "new" as const,
   args: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
@@ -32,7 +31,6 @@ const BROWSER_CONFIG = {
   ]
 } as const;
 
-// Helper function to setup page
 async function setupPage(page: Page): Promise<void> {
   await Promise.all([
     page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'),
@@ -54,7 +52,6 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
   let browser: Browser | undefined;
   
   try {
-    // Input validation
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("query")?.trim();
     
@@ -65,21 +62,15 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       );
     }
 
-    // Initialize puppeteer with our utility
     const puppeteer = setupPuppeteer();
     // @ts-expect-error: Ignoring type error due to dynamic import issue
-
-
     browser = await puppeteer.launch(BROWSER_CONFIG);
     const page = await browser.newPage();
     
-    // Configure browser environment
     await setupPage(page);
 
-    // Construct search URL with encoding
-    const url = `https://medium.com/search?q=${encodeURIComponent(query)}+roadmap`; ;
+    const url = `https://medium.com/search?q=${encodeURIComponent(query)}+roadmap`;
     
-    // Navigate with proper error handling
     const response = await page.goto(url, {
       waitUntil: 'networkidle2',
       timeout: 30000
@@ -95,7 +86,6 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       const blogElements = document.querySelectorAll('.bh.l');
       const blogData: BlogData[] = [];
       
-      // Only loop through the first 10 blogs
       for (let i = 0; i < Math.min(10, blogElements.length); i++) {
         const blog = blogElements[i];
         const title = blog.querySelector('h2')?.innerText || null;
@@ -111,7 +101,6 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       return blogData;
     });
     
-  
     await browser.close();
   
     return NextResponse.json({
@@ -132,7 +121,6 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
     );
 
   } finally {
-    // Ensure browser cleanup
     if (browser) {
       await browser.close().catch((error: Error) => 
         console.error('Error closing browser:', error)

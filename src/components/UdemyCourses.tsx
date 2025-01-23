@@ -34,7 +34,7 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
     );
   }
 
-  const displayedCourses = showAll ? courses : courses.slice(0, 2);
+  const displayedCourses = showAll ? courses : courses.slice(0, 1);
 
   const truncateDescription = (description: string, wordLimit: number) => {
     const words = description.split(" ");
@@ -107,94 +107,102 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-       className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-8 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl flex flex-col gap-12"
+      className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-6 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl flex flex-col gap-8"
     >
-      <motion.h3
-        className="text-2xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400"
-      >
+      <motion.h3 className="text-xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
         Udemy Courses
       </motion.h3>
 
-      {displayedCourses.map((course, index) => (
-        <motion.div
-          key={index}
-          variants={itemVariants}
-          whileHover={{ scale: 1.02 }}
-          className="bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-xl overflow-hidden shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300"
-        >
-          <div className="relative w-full h-[200px] group overflow-hidden">
-            <Image
-              src={course.thumbnail}
-              alt={course.name}
-              width={1280}
-              height={200}
-              className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
-          </div>
-
-          <div className="p-6 space-y-4">
-            <div className="space-y-2">
-              <h3 className="text-xl font-semibold leading-tight">
-                {course.name}
-              </h3>
-              <p className="text-sm text-gray-400 font-medium">
-                {course.workload}
-              </p>
-
-              <div className="flex items-center gap-1.5">
-                {renderRatingStars(course.rating)}
-                <span className="text-sm text-gray-400 ml-1">
-                  ({course.rating})
-                </span>
-              </div>
-            </div>
-
-            <motion.p
-              initial={false}
-              animate={{ height: "auto" }}
-              className="text-sm text-gray-300 leading-relaxed"
+      {/* Scrollable Container */}
+      <div
+        className="overflow-y-auto max-h-[400px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50"
+        style={{
+          scrollbarWidth: "thin", // For Firefox
+        }}
+      >
+        <div className="space-y-6">
+          {displayedCourses.map((course, index) => (
+            <motion.div
+              key={index}
+              variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
+              className="bg-gradient-to-r from-[#1b1b1b] to-[#242424] text-white rounded-xl overflow-hidden shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300"
             >
-              {expandedDescriptions[index]
-                ? course.description
-                : truncateDescription(course.description, 10)}
-            </motion.p>
+              <div className="relative w-full h-[150px] group overflow-hidden">
+                <Image
+                  src={course.thumbnail}
+                  alt={course.name}
+                  width={600}
+                  height={150}
+                  className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
+              </div>
 
-            <div className="flex items-center justify-between pt-2">
-              {course.description.split(" ").length > 10 && (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => toggleDescription(index)}
-                  className="text-blue-400 hover:text-blue-300 text-sm font-medium"
+              <div className="p-4 space-y-3">
+                <div className="space-y-1">
+                  <h3 className="text-lg font-semibold leading-tight">
+                    {course.name}
+                  </h3>
+                  <p className="text-xs text-gray-400 font-medium">
+                    {course.workload}
+                  </p>
+
+                  <div className="flex items-center gap-1.5">
+                    {renderRatingStars(course.rating)}
+                    <span className="text-xs text-gray-400 ml-1">
+                      ({course.rating})
+                    </span>
+                  </div>
+                </div>
+
+                <motion.p
+                  initial={false}
+                  animate={{ height: "auto" }}
+                  className="text-xs text-gray-300 leading-relaxed"
                 >
-                  {expandedDescriptions[index] ? "Read Less" : "Read More"}
-                </motion.button>
-              )}
+                  {expandedDescriptions[index]
+                    ? course.description
+                    : truncateDescription(course.description, 10)}
+                </motion.p>
 
-              <motion.a
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                href={course.registrationLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25 text-sm"
-              >
-                Enroll Now
-              </motion.a>
-            </div>
-          </div>
-        </motion.div>
-      ))}
+                <div className="flex items-center justify-between pt-2">
+                  {course.description.split(" ").length > 10 && (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => toggleDescription(index)}
+                      className="text-blue-400 hover:text-blue-300 text-xs font-medium"
+                    >
+                      {expandedDescriptions[index] ? "Read Less" : "Read More"}
+                    </motion.button>
+                  )}
 
-      {courses.length > 2 && (
+                  <motion.a
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    href={course.registrationLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block px-4 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25 text-xs"
+                  >
+                    Enroll Now
+                  </motion.a>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {courses.length > 1 && (
         <motion.button
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowAll(!showAll)}
-          className="w-full max-w-[600px] mt-6 px-6 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-purple-500 hover:via-pink-500 hover:to-purple-500 hover:shadow-lg hover:shadow-purple-500/25"
+          className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-purple-500 hover:via-pink-500 hover:to-purple-500 hover:shadow-lg hover:shadow-purple-500/25 text-sm"
         >
           {showAll ? "Show Less" : "Show More"}
         </motion.button>

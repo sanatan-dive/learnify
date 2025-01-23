@@ -29,7 +29,8 @@ const WorldResourceLoader: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b f">
+      {/* World Map Container */}
       <div className="relative w-80 h-80 md:w-96 md:h-96">
         <svg viewBox="0 0 1000 500" className="w-full h-full">
           {/* Background Map Path */}
@@ -53,10 +54,18 @@ const WorldResourceLoader: React.FC = () => {
           ))}
         </svg>
       </div>
+
+      {/* Loading Spinner */}
+      <div className="relative mt-8">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="h-8 w-8 bg-blue-500 rounded-full animate-pulse"></div>
+        </div>
+      </div>
+
       {/* Loading Text */}
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-400"></div>
       <motion.div
-        className="text-2xl font-bold text-gray-300 mt-8"
+        className="text-2xl font-bold mt-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, repeatType: "reverse" }}

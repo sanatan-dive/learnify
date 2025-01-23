@@ -9,13 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.10.0",
+    "@tabler/icons-react": "^3.29.0",
     "axios": "^1.7.9",
+    "bull": "^4.16.5",
     "cheerio": "^1.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
     "dotted-map": "^2.2.3",
-    "framer-motion": "^12.0.0",
+    "framer-motion": "^12.0.1",
     "lucide-react": "^0.473.0",
     "motion": "^12.0.0-alpha.2",
     "next": "15.1.5",
@@ -31,6 +34,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/bull": "^3.15.9",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
