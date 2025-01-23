@@ -34,8 +34,8 @@ export const StarsBackground: React.FC<StarBackgroundProps> = ({
   className,
 }) => {
   const [stars, setStars] = useState<StarProps[]>([]);
-  const canvasRef: RefObject<HTMLCanvasElement> =
-    useRef<HTMLCanvasElement>(null) ;
+  // @ts-expect-error: Ignoring type error due to dynamic import issue
+  const canvasRef: RefObject<HTMLCanvasElement> = useRef<HTMLCanvasElement>(null);
 
   const generateStars = useCallback(
     (width: number, height: number): StarProps[] => {

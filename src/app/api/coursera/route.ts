@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
+import Error from "next/error";
 
 const API_KEY = process.env.COURSERA_API_KEY || "";
 const API_URL = process.env.COURSERA_API_URL || "https://api.coursera.org/api/courses.v1";

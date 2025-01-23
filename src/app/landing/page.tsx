@@ -10,8 +10,17 @@ import UdemyCourses from "@/components/UdemyCourses";
 import { ApiResponse } from "@/types";
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
 import WorldResourceLoader from "@/components/Loading";
+import { Suspense } from "react";
 
 export default function LandingPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LandingPageContent />
+    </Suspense>
+  );
+}
+
+function LandingPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const query = searchParams.get("query");
@@ -80,7 +89,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen  flex flex-col justify-center items-center p-8">
+    <div className="min-h-screen flex flex-col justify-center items-center p-8">
       <AnimatePresence mode="wait">
         {!isLoading && (
           <motion.div
@@ -122,28 +131,21 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
               {responses && (
                 <>
-                  
-                
-                    <YouTubePlaylist playlists={responses.youtube?.playlists || []} />
-                  
+                  <YouTubePlaylist playlists={responses.youtube?.playlists || []} />
 
                   <motion.div
                     variants={itemVariants}
                     className="bg-gradient-to-b from-[] p-8 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl flex flex-col gap-12"
                   >
                     <div>
-                    
                       <CourseraCourses courses={responses.coursera?.courses || []} />
                     </div>
                     <div>
-                    
                       <UdemyCourses courses={responses.udemy?.courses || []} />
                     </div>
                   </motion.div>
 
-            
-                    <MediumBlogs blogs={responses.medium?.blogs || []} />
-                  
+                  <MediumBlogs blogs={responses.medium?.blogs || []} />
                 </>
               )}
             </div>

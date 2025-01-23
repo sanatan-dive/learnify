@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { Marquee } from "@/components/ui/marquee";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { WorldMapDemo } from "@/components/Loading";
+
 
 const reviews = [
   {
