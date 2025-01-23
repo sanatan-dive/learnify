@@ -1,8 +1,9 @@
-// components/CourseraCourses.tsx
 "use client";
+
 import Image from "next/image";
 import { useState } from "react";
 import { Star } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface CourseraCoursesProps {
   courses: {
@@ -22,7 +23,15 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
   }>({});
 
   if (!courses || courses.length === 0) {
-    return <p className="text-white">No courses available.</p>;
+    return (
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="text-white text-center py-8"
+      >
+        No courses available.
+      </motion.p>
+    );
   }
 
   const displayedCourses = showAll ? courses : courses.slice(0, 2);
@@ -61,7 +70,7 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
         <div key="half-star" className="relative w-4 h-4">
           <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
           <div
-            className="absolute inset-0 w-1/2 h-full bg-[#0f0f0f]"
+            className="absolute inset-0 w-1/2 h-full bg-gray-900"
             style={{ clipPath: "inset(0 0)" }}
           ></div>
         </div>
@@ -71,79 +80,125 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
     const remainingStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 1; i <= remainingStars; i++) {
       stars.push(
-        <Star
-          key={`empty-${i}`}
-          className="w-4 h-4 text-gray-400"
-        />
+        <Star key={`empty-${i}`} className="w-4 h-4 text-gray-400" />
       );
     }
 
     return stars;
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div className="space-y-4">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+       className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-8 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl flex flex-col gap-12"
+    >
+      <motion.h3
+        className="text-2xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400"
+      >
+        Udemy Courses
+      </motion.h3>
+
       {displayedCourses.map((course, index) => (
-        <div
+        <motion.div
           key={index}
-          className="bg-[#0f0f0f] text-white rounded-lg overflow-hidden shadow-lg"
+          variants={itemVariants}
+          whileHover={{ scale: 1.02 }}
+          className="bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-xl overflow-hidden shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300"
         >
-          <div className="relative w-full h-[150px]">
+          <div className="relative w-full h-[200px] group overflow-hidden">
             <Image
               src={course.thumbnail}
               alt={course.name}
               width={1280}
               height={200}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-105"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
           </div>
 
-          <div className="p-4 space-y-2">
-            <h3 className="text-lg font-semibold">{course.name}</h3>
-            <p className="text-sm text-gray-400">{course.workload}</p>
+          <div className="p-6 space-y-4">
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold leading-tight">
+                {course.name}
+              </h3>
+              <p className="text-sm text-gray-400 font-medium">
+                {course.workload}
+              </p>
 
-            <div className="flex items-center gap-1">
-              {renderRatingStars(course.rating)}
-              <span className="text-sm text-gray-400">({course.rating})</span>
+              <div className="flex items-center gap-1.5">
+                {renderRatingStars(course.rating)}
+                <span className="text-sm text-gray-400 ml-1">
+                  ({course.rating})
+                </span>
+              </div>
             </div>
 
-            <p className="text-sm text-gray-300">
+            <motion.p
+              initial={false}
+              animate={{ height: "auto" }}
+              className="text-sm text-gray-300 leading-relaxed"
+            >
               {expandedDescriptions[index]
                 ? course.description
                 : truncateDescription(course.description, 10)}
-            </p>
+            </motion.p>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pt-2">
               {course.description.split(" ").length > 10 && (
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => toggleDescription(index)}
-                  className="text-blue-400 hover:text-blue-300 text-sm"
+                  className="text-blue-400 hover:text-blue-300 text-sm font-medium"
                 >
                   {expandedDescriptions[index] ? "Read Less" : "Read More"}
-                </button>
+                </motion.button>
               )}
 
-              <a
+              <motion.a
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 href={course.registrationLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block px-4 py-2 bg-gradient-to-r hover:scale-105 transition-transform  from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors text-sm"
+                className="inline-block px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25 text-sm"
               >
                 Enroll Now
-              </a>
+              </motion.a>
             </div>
           </div>
-        </div>
+        </motion.div>
       ))}
 
       {courses.length > 2 && (
-        <button
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => setShowAll(!showAll)}
-          className="mt-4 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors text-sm"
+          className="w-full max-w-[600px] mt-6 px-6 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-purple-500 hover:via-pink-500 hover:to-purple-500 hover:shadow-lg hover:shadow-purple-500/25"
         >
           {showAll ? "Show Less" : "Show More"}
-        </button>
+        </motion.button>
       )}
-    </div>
+    </motion.div>
   );
 }

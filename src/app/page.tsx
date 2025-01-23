@@ -6,6 +6,8 @@ import { TextRevealCard } from "@/components/ui/text-reveal-card";
 import { useRouter } from "next/navigation";
 import { Marquee } from "@/components/ui/marquee";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { WorldMapDemo } from "@/components/Loading";
 
 const reviews = [
   {
@@ -49,6 +51,7 @@ const reviews = [
 const firstRow = reviews.slice(0, reviews.length / 2);
 const secondRow = reviews.slice(reviews.length / 2);
 
+
 const ReviewCard = ({
   img,
   name,
@@ -59,15 +62,9 @@ const ReviewCard = ({
   name: string;
   username: string;
   body: string;
-}) => {
+})=> {
   return (
-    <figure
-      className={cn(
-        "relative w-64 cursor-pointer overflow-hidden rounded-xl border p-4",
-        // light styles
-        "border-gray-200 bg-white hover:bg-gray-100",
-      )}
-    >
+    <figure className="relative w-64 cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white p-4 transition-all hover:scale-105 hover:shadow-lg">
       <div className="flex flex-row items-center gap-2">
         <img className="rounded-full" width="32" height="32" alt="" src={img} />
         <div className="flex flex-col">
@@ -85,72 +82,72 @@ const ReviewCard = ({
 export default function Home() {
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isLoading, setIsLoading] = useState(false);
 
-  const placeholders = [
-    "Enter your Topic",
-    "Generate a Roadmap"
-  ];
+  const placeholders = ["Enter your Topic", "Generate a Roadmap"];
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // Encode the query for the URL
-    const encodedQuery = encodeURIComponent(query);
-
-    // Set loading state to true
     setIsLoading(true);
 
     try {
-      // Simulate a delay (optional, for loading state)
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Navigate to the landing page with the query as a URL parameter
-      router.push(`/landing?query=${encodedQuery}`);
+      router.push(`/landing?query=${encodeURIComponent(query)}`);
     } catch (error) {
       console.error("Error navigating to landing page:", error);
-      // Optionally, show an error message to the user
     } finally {
-      // Set loading state to false
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col gap-8 justify-center items-center ">
-      {/* Text Reveal Card */}
-      <TextRevealCard text="Your Personalized Guide" revealText="At one click" />
+    <div className="min-h-screen  flex flex-col gap-8 justify-center items-center">
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >
+        <TextRevealCard text="Your Personalized Guide" revealText="At one click" />
+      </motion.div>
 
-      {/* Placeholders and Vanish Input */}
-      <PlaceholdersAndVanishInput  
-        placeholders={placeholders}
-        onChange={handleChange}
-        onSubmit={onSubmit}
-        disabled={isLoading} 
-      />
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >
+        <PlaceholdersAndVanishInput
+          
+          placeholders={placeholders}
+          onChange={handleChange}
+          onSubmit={onSubmit}
+          disabled={isLoading}
+        />
+      </motion.div>
 
-      {/* Reviews Marquee Section */}
-      <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden rounded-lg  ">
-        <Marquee pauseOnHover className="[--duration:20s]">
-          {firstRow.map((review) => (
-            <ReviewCard key={review.username} {...review} />
-          ))}
-        </Marquee>
-        <Marquee pauseOnHover reverse className="[--duration:20s]">
-          {secondRow.map((review) => (
-            <ReviewCard key={review.username} {...review} />
-          ))}
-        </Marquee>
-       
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-[#1f1f1f]"></div>
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-[#1f1f1f]"></div>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >
+        <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden rounded-lg">
+          <Marquee pauseOnHover className="[--duration:20s]">
+            {firstRow.map((review) => (
+              <ReviewCard key={review.username} {...review} />
+            ))}
+          </Marquee>
+          <Marquee pauseOnHover reverse className="[--duration:20s]">
+            {secondRow.map((review) => (
+              <ReviewCard key={review.username} {...review} />
+            ))}
+          </Marquee>
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-[#1f1f1f]"></div>
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-[#1f1f1f]"></div>
+        </div>
+        
+      </motion.div>
 
-      {/* Loading State */}
       {isLoading && (
         <div className="flex flex-col items-center gap-2">
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
