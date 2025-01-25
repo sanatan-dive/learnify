@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  firstName String?
+  lastName  String?
+  imageUrl  String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  bookmarks Bookmark[]
+}
+
+model Blog {
+  id          String   @id @default(cuid())
+  title       String
+  link        String
+  author      String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  bookmarks Bookmark[] @relation("BlogBookmarks")
+}
+
+model Course {
+  id               String   @id @default(cuid())
+  name             String
+  registrationLink String
+  description      String
+  rating           Float
+  thumbnail        String
+  workload         String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  bookmarks Bookmark[] @relation("CourseBookmarks")
+}
+
+model Playlist {
+  id        String   @id @default(cuid())
+  title     String
+  link      String   @unique
+  thumbnail String
+  channel   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookmarks Bookmark[] @relation("PlaylistBookmarks")
+}
+
+model Bookmark {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  bookmarkableId   String
+  bookmarkableType String
+
+  // Fields for Blog
+  blogTitle       String?
+  blogLink        String?
+  blogAuthor      String?
+  blogDescription String?
+
+  // Fields for Course
+  courseName        String?
+  courseLink        String?
+  courseDescription String?
+  courseRating      Float?
+  courseThumbnail   String?
+  courseWorkload    String?
+
+  // Fields for Playlist
+  playlistTitle     String?
+  playlistLink      String?
+  playlistThumbnail String?
+  playlistChannel   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation fields with custom names and unique constraint names
+  blog     Blog?     @relation("BlogBookmarks", fields: [bookmarkableId], references: [id], map: "bookmark_blog_fkey")
+  course   Course?   @relation("CourseBookmarks", fields: [bookmarkableId], references: [id], map: "bookmark_course_fkey")
+  playlist Playlist? @relation("PlaylistBookmarks", fields: [bookmarkableId], references: [id], map: "bookmark_playlist_fkey")
+}

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Bookmark } from "lucide-react";
+import { useAuth, SignInButton } from "@clerk/nextjs";
+import LoginDialog from "./LoginDialog";
 
 interface MediumBlogsProps {
   blogs: {
@@ -18,6 +20,11 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
   const [expandedDescriptions, setExpandedDescriptions] = useState<{
     [key: number]: boolean;
   }>({});
+  const [bookmarkedBlogs, setBookmarkedBlogs] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const { isSignedIn } = useAuth();
 
   if (!blogs || blogs.length === 0) {
     return (
@@ -38,6 +45,20 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
       ...prev,
       [index]: !prev[index],
     }));
+  };
+
+  const handleBookmarkClick = (index: number) => {
+    if (!isSignedIn) {
+      setShowLoginDialog(true);
+      return;
+    }
+    setBookmarkedBlogs((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+    console.log(
+      bookmarkedBlogs[index] ? "Removed from bookmarks" : "Bookmarked blog"
+    );
   };
 
   const containerVariants = {
@@ -62,6 +83,10 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
       animate="visible"
       className="space-y-6"
     >
+      {showLoginDialog && (
+        <LoginDialog setShowLoginDialog={setShowLoginDialog} />
+      )}
+      
       <motion.div
         variants={itemVariants}
         className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-8 flex flex-col gap-8 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl"
@@ -90,7 +115,7 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
                   whileHover={{ scale: 1.02 }}
                   className="bg-gradient-to-r from-[#1b1b1b] to-[#242424] p-8 flex gap-4 rounded-xl shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300"
                 >
-                  <div className="space-y-4">
+                  <div className="space-y-4 flex-1">
                     <h3 className="text-xl text-white font-bold leading-tight">
                       {blog.title}
                     </h3>
@@ -121,7 +146,7 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
                       )}
                     </motion.div>
 
-                    <motion.div className="pt-2">
+                    <motion.div className="pt-2 flex items-center justify-between">
                       <motion.a
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -133,6 +158,21 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
                         Read Blog
                         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                       </motion.a>
+
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.0 }}
+                        onClick={() => handleBookmarkClick(index)}
+                        className="p-2 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-all duration-300"
+                      >
+                        <Bookmark
+                          className={`w-5 h-5 ${
+                            bookmarkedBlogs[index]
+                              ? "text-purple-500 fill-purple-500"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      </motion.button>
                     </motion.div>
                   </div>
                 </motion.div>

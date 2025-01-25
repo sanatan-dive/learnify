@@ -1,10 +1,14 @@
-"use client";
-
-import Image from "next/image";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { Volume2, Play, Bookmark } from "lucide-react";
-import { motion } from "framer-motion";
-import { useAuth, SignInButton } from "@clerk/nextjs"; // Import Clerk hooks
+import { useAuth, useUser } from "@clerk/nextjs"; // Import Clerk hooks
+import Image from "next/image";
+import axios from "axios";
+import LoginDialog from "./LoginDialog";
+import { PrismaClient } from "@prisma/client";
+
+// Initialize Prisma client
+const prisma = new PrismaClient();
 
 interface YouTubePlaylistProps {
   playlists: {
@@ -19,7 +23,10 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
   const [showAll, setShowAll] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [showLoginDialog, setShowLoginDialog] = useState(false); // State for custom dialog
-  const { isSignedIn } = useAuth(); // Get auth state from Clerk
+  const { isSignedIn, user } = useUser(); 
+  const [bookmarkedPlaylists, setBookmarkedPlaylists] = useState<{
+    [key: number]: boolean;
+  }>({}); // Track bookmarked playlists by index
 
   if (!playlists || playlists.length === 0) {
     return (
@@ -50,15 +57,55 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
     visible: { opacity: 1, y: 0 },
   };
 
-  const handleBookmarkClick = () => {
+  const handleBookmarkClick = async (index: number) => {
     if (!isSignedIn) {
       setShowLoginDialog(true); // Show custom dialog if user is not logged in
       return;
     }
-    // Handle bookmark logic here for logged-in users
-    console.log("Bookmarking playlist...");
+  
+    const playlist = playlists[index];
+  
+    try {
+      
+      const fetchedPlaylist = await prisma.playlist.findUnique({
+        where: { link: playlist.link }, 
+      });
+  
+      if (!fetchedPlaylist) {
+        console.error("Playlist not found in the database");
+        return;
+      }
+  
+      // Send API request to save the bookmark using the playlist's ID
+      await axios.post("/api/bookmark", {
+        userId: user?.id, 
+        bookmarkableId: fetchedPlaylist.id, // Use the ID from the fetched playlist
+        bookmarkableType: "Playlist", 
+        details: {
+          playlist: {
+            title: playlist.title,
+            link: playlist.link,
+            thumbnail: playlist.thumbnail,
+            channel: playlist.channel,
+          },
+        },
+      });
+  
+      // Toggle bookmark state for the playlist
+      setBookmarkedPlaylists((prev) => ({
+        ...prev,
+        [index]: !prev[index], // Toggle the bookmark state for the specific playlist
+      }));
+  
+      console.log(
+        bookmarkedPlaylists[index] ? "Removed from bookmarks" : "Bookmarked playlist"
+      );
+    } catch (error) {
+      console.error("Error saving bookmark:", error);
+    }
   };
-
+  
+  
   return (
     <motion.div
       variants={containerVariants}
@@ -68,34 +115,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
     >
       {/* Custom Dialog Box */}
       {showLoginDialog && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="bg-neutral-900 p-6 rounded-lg shadow-lg max-w-sm w-full border border-gray-800/50"
-          >
-            <h2 className="text-xl font-semibold text-white mb-4">
-              Login Required
-            </h2>
-            <p className="text-gray-400 mb-6">
-              To bookmark this playlist, please log in or sign up.
-            </p>
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={() => setShowLoginDialog(false)}
-                className="px-4 py-2 bg-gray-700/50 text-white rounded-lg hover:bg-gray-600/50 transition-all"
-              >
-                Cancel
-              </button>
-              <SignInButton>
-                <button className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-500 hover:to-pink-500 transition-all">
-                  Login / Sign Up
-                </button>
-              </SignInButton>
-            </div>
-          </motion.div>
-        </div>
+        <LoginDialog setShowLoginDialog={setShowLoginDialog} />
       )}
 
       <motion.div
@@ -137,12 +157,12 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
                       alt={playlist.title}
                       width={400}
                       height={250}
-                      className="w-full h-full object-cover "
+                      className="w-full h-full object-cover"
                     />
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: hoveredIndex === index ? 1 : 0 }}
-                      className="absolute inset-0 bg-black/75  flex items-center justify-center backdrop-blur-sm"
+                      className="absolute inset-0 bg-black/75 flex items-center justify-center backdrop-blur-sm"
                     >
                       <motion.div
                         whileHover={{ scale: 1.1 }}
@@ -172,15 +192,21 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
                       href={playlist.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block px-6 py-2.5 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-red-500 hover:to-pink-500 hover:shadow-lg hover:shadow-red-500/25 active:scale-95 text-center"
+                      className="inline-block px-6 py-1 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg font-normal transition-all duration-300 hover:from-red-500 hover:to-pink-500 hover:shadow-lg hover:shadow-red-500/25 active:scale-95 text-center"
                     >
                       Watch Playlist
                     </a>
                     <button
-                      onClick={handleBookmarkClick}
+                      onClick={() => handleBookmarkClick(index)} 
                       className="p-2.5 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-all duration-300"
                     >
-                      <Bookmark className="w-5 h-5 text-gray-300" />
+                      <Bookmark
+                        className={`w-5 h-5 ${
+                          bookmarkedPlaylists[index]
+                            ? "text-purple-500 fill-purple-500" // Bookmarked state
+                            : "text-gray-300" // Default state
+                        }`}
+                      />
                     </button>
                   </div>
                 </div>

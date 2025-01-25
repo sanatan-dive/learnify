@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
+import { PrismaClient } from "@prisma/client";
 
 // Types for better type safety
 interface PlaylistData {
@@ -23,6 +24,7 @@ interface ApiError {
 // YouTube Data API configuration
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || "";
 const YOUTUBE_API_URL = process.env.YOUTUBE_API_URL || "https://www.googleapis.com/youtube/v3/search";
+const prisma = new PrismaClient();
 
 export async function GET(request: Request): Promise<NextResponse<ApiResponse | ApiError>> {
   try {
@@ -56,8 +58,23 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       channel: item.snippet.channelTitle,
     }));
 
+    // Save playlists to Prisma
+    const savedPlaylists = await Promise.all(
+      playlists.map((playlist) =>
+        prisma.playlist.create({
+          data: {
+            title: playlist.title,
+            link: playlist.link,
+            thumbnail: playlist.thumbnail,
+            channel: playlist.channel,
+          },
+        })
+      )
+    );
+
+    // Return the response with saved playlists and metadata
     return NextResponse.json({
-      playlists,
+      playlists: savedPlaylists,
       timestamp: new Date().toISOString(),
       query,
     });

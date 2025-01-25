@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Bookmark } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuth, SignInButton } from "@clerk/nextjs";
+import LoginDialog from "./LoginDialog";
 
 interface CourseraCoursesProps {
   courses: {
@@ -19,6 +21,11 @@ interface CourseraCoursesProps {
 export default function CourseraCourses({ courses }: CourseraCoursesProps) {
   const [showAll, setShowAll] = useState(false);
   const [expandedDescriptions, setExpandedDescriptions] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const { isSignedIn } = useAuth();
+  const [bookmarkedCourses, setBookmarkedCourses] = useState<{
     [key: number]: boolean;
   }>({});
 
@@ -51,6 +58,20 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
     }));
   };
 
+  const handleBookmarkClick = (index: number) => {
+    if (!isSignedIn) {
+      setShowLoginDialog(true);
+      return;
+    }
+    setBookmarkedCourses((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+    console.log(
+      bookmarkedCourses[index] ? "Removed from bookmarks" : "Bookmarked course"
+    );
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -73,6 +94,9 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
       animate="visible"
       className="space-y-6"
     >
+         {showLoginDialog && (
+        <LoginDialog setShowLoginDialog={setShowLoginDialog} />
+      )}
       <motion.div
         variants={itemVariants}
         className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-6 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl flex flex-col gap-8"
@@ -81,11 +105,10 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
           Coursera Courses
         </motion.h3>
 
-        {/* Scrollable Container */}
         <div
           className="overflow-y-auto max-h-[400px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50"
           style={{
-            scrollbarWidth: "thin", // For Firefox
+            scrollbarWidth: "thin",
           }}
         >
           <div className="space-y-6">
@@ -152,17 +175,34 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
                       </motion.button>
                     )}
 
-                    <motion.a
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      href={course.registrationLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25 text-xs group"
-                    >
-                      Enroll Now
-                      <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
-                    </motion.a>
+                    <div className="flex items-center gap-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleBookmarkClick(index)}
+                        className="p-1.5 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-all duration-300"
+                      >
+                        <Bookmark
+                          className={`w-4 h-4 ${
+                            bookmarkedCourses[index]
+                              ? "text-purple-500 fill-purple-500"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      </motion.button>
+
+                      <motion.a
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        href={course.registrationLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25 text-xs group"
+                      >
+                        Enroll Now
+                        <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+                      </motion.a>
+                    </div>
                   </div>
                 </div>
               </motion.div>
