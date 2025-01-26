@@ -81,7 +81,7 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-4" // Reduced space-y-6 to space-y-4
+      className="space-y-6" // Reduced space-y-6 to space-y-4
     >
       {showLoginDialog && (
         <LoginDialog setShowLoginDialog={setShowLoginDialog} />
@@ -89,7 +89,7 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
 
       <motion.div
         variants={itemVariants}
-        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-6 flex flex-col gap-6 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl" // Reduced padding and gap
+        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-8 flex flex-col gap-8 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl" // Reduced padding and gap
       >
         <motion.h3 className="text-xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
           Medium Blogs
@@ -102,7 +102,7 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
             scrollbarWidth: "thin", // For Firefox
           }}
         >
-          <div className="space-y-6"> {/* Reduced space-y-6 to space-y-4 */}
+          <div className="space-y-8"> {/* Reduced space-y-6 to space-y-4 */}
             {displayedBlogs.map((blog, index) => {
               const isDescriptionExpanded = expandedDescriptions[index];
               const description = blog.description || "";
@@ -113,9 +113,9 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
                   key={index}
                   variants={itemVariants}
                   whileHover={{ scale: 1.02 }}
-                  className="bg-gradient-to-r from-[#1b1b1b] to-[#242424] p-6 flex gap-4 rounded-xl shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300" // Reduced padding
+                  className="bg-gradient-to-r from-[#1b1b1b] to-[#242424] p-6 flex gap-6 rounded-xl shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300" // Reduced padding
                 >
-                  <div className="space-y-6 flex-1"> {/* Reduced space-y-4 to space-y-3 */}
+                  <div className="space-y-7 flex-1"> {/* Reduced space-y-4 to space-y-3 */}
                     <h3 className="text-lg text-white font-bold leading-tight"> {/* Reduced text size */}
                       {blog.title}
                     </h3>
@@ -146,14 +146,14 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
                       )}
                     </motion.div>
 
-                    <motion.div className="pt-1 flex items-center justify-between"> {/* Reduced padding */}
+                    <motion.div className="pt- flex items-center justify-between"> {/* Reduced padding */}
                       <motion.a
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         href={blog.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25 text-xs group" // Reduced padding and text size
+                        className="inline-flex items-center gap-5 px-4 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25 text-xs group" // Reduced padding and text size
                       >
                         Read Blog
                         <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" /> {/* Reduced icon size */}

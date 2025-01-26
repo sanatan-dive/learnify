@@ -120,7 +120,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
 
       <motion.div
         variants={itemVariants}
-        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-8 rounded-2xl flex flex-col gap-8 shadow-2xl border border-gray-800/50 backdrop-blur-xl" // Reduced padding and gap
+        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-10 rounded-2xl flex flex-col gap-12 shadow-2xl border border-gray-800/50 backdrop-blur-xl" // Reduced padding and gap
       >
         <motion.h3 className="text-2xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
           YouTube Playlists
@@ -128,12 +128,12 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
 
         {/* Scrollable Container */}
         <div
-          className="overflow-y-auto max-h-[505px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-
+          className="overflow-y-auto max-h-[500px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-
           style={{
             scrollbarWidth: "thin", // For Firefox
           }}
         >
-          <div className="space-y-6"> {/* Reduced space-y-6 to space-y-4 */}
+          <div className="space-y-8"> 
             {displayedPlaylists.map((playlist, index) => (
               <motion.div
                 key={index}
@@ -187,7 +187,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
                       {playlist.channel}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3"> {/* Reduced gap */}
+                  <div className="flex items-center gap-4"> {/* Reduced gap */}
                     <a
                       href={playlist.link}
                       target="_blank"

@@ -88,7 +88,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
   };
   
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-8 w-full text-white">
+    <div className="min-h-screen flex flex-col justify-center items-center p-10 w-full text-white">
       <AnimatePresence mode="wait">
         {!localIsLoading && (
           <motion.div
@@ -97,7 +97,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="w-full max-w-4xl mb-12"
+            className="w-full max-w-4xl mb-10"
           >
             <PlaceholdersAndVanishInput
               placeholders={placeholders}
@@ -127,7 +127,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
             animate="visible"
             className="w-full max-w-8xl"
           >
-            <div className="grid grid-cols-1  md:grid-cols-3 gap-8 lg:gap-10 max-h-[80vh] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10  ">
               {responses && (
                 <>
                   <YouTubePlaylist playlists={responses?.results?.youtube?.playlists || []} />
