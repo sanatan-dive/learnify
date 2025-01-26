@@ -38,6 +38,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
         }
 
         const data: ApiResponse = await response.json();
+        
         setResponses(data);
         console.log(data);
       } catch (error) {
@@ -85,7 +86,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
       },
     },
   };
-
+  
   return (
     <div className="min-h-screen flex flex-col justify-center items-center p-8 w-full text-white">
       <AnimatePresence mode="wait">
@@ -126,22 +127,22 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
             animate="visible"
             className="w-full max-w-8xl"
           >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 max-h-[80vh] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50">
+            <div className="grid grid-cols-1  md:grid-cols-3 gap-8 lg:gap-10 max-h-[80vh] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50">
               {responses && (
                 <>
-                  <YouTubePlaylist playlists={responses.youtube?.playlists || []} />
+                  <YouTubePlaylist playlists={responses?.results?.youtube?.playlists || []} />
                   <motion.div
                     variants={itemVariants}
-                    className="flex flex-col gap-12"
+                    className="flex flex-col gap-8"
                   >
                     <div>
-                      <CourseraCourses courses={responses.coursera?.courses || []} />
+                      <CourseraCourses courses={responses?.results?.coursera?.courses || []} />
                     </div>
                     <div>
-                      <UdemyCourses courses={responses.udemy?.courses || []} />
+                      <UdemyCourses  courses={responses?.results?.udemy?.courses || []} />
                     </div>
                   </motion.div>
-                  <MediumBlogs blogs={responses.medium?.blogs || []} />
+                  <MediumBlogs blogs={responses?.results?.medium?.blogs || []} />
                 </>
               )}
             </div>

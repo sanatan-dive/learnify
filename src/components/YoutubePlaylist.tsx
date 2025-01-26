@@ -26,7 +26,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
   const { isSignedIn, user } = useUser(); 
   const [bookmarkedPlaylists, setBookmarkedPlaylists] = useState<{
     [key: number]: boolean;
-  }>({}); // Track bookmarked playlists by index
+  }>({}); 
 
   if (!playlists || playlists.length === 0) {
     return (
@@ -59,7 +59,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
 
   const handleBookmarkClick = async (index: number) => {
     if (!isSignedIn) {
-      setShowLoginDialog(true); // Show custom dialog if user is not logged in
+      setShowLoginDialog(true); 
       return;
     }
   
@@ -120,7 +120,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
 
       <motion.div
         variants={itemVariants}
-        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-8 rounded-2xl flex flex-col gap-8 shadow-2xl border border-gray-800/50 backdrop-blur-xl"
+        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-8 rounded-2xl flex flex-col gap-8 shadow-2xl border border-gray-800/50 backdrop-blur-xl" // Reduced padding and gap
       >
         <motion.h3 className="text-2xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
           YouTube Playlists
@@ -128,12 +128,12 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
 
         {/* Scrollable Container */}
         <div
-          className="overflow-y-auto max-h-[600px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50"
+          className="overflow-y-auto max-h-[505px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-
           style={{
             scrollbarWidth: "thin", // For Firefox
           }}
         >
-          <div className="space-y-6">
+          <div className="space-y-6"> {/* Reduced space-y-6 to space-y-4 */}
             {displayedPlaylists.map((playlist, index) => (
               <motion.div
                 key={index}
@@ -142,7 +142,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
                 className="w-full max-w-[600px] bg-gradient-to-b from-[#1b1b1b] to-[#242424] text-white flex 2xl:flex-row flex-col rounded-xl overflow-hidden shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300"
               >
                 <div
-                  className="relative flex-shrink-0 w-full md:w-[250px] justify-center items-center flex lg:w-[300px] group"
+                  className="relative flex-shrink-0 w-full md:w-[200px] justify-center items-center flex lg:w-[250px] group" // Reduced width
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
                 >
@@ -155,8 +155,8 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
                     <Image
                       src={playlist.thumbnail}
                       alt={playlist.title}
-                      width={400}
-                      height={250}
+                      width={300} // Reduced width
+                      height={200} // Reduced height
                       className="w-full h-full object-cover"
                     />
                     <motion.div
@@ -168,44 +168,44 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
                         whileHover={{ scale: 1.1 }}
                         className="flex items-center gap-2 text-white"
                       >
-                        <Play className="w-8 h-8" />
-                        <span className="text-lg font-semibold">Play All</span>
+                        <Play className="w-6 h-6" /> {/* Reduced icon size */}
+                        <span className="text-md font-semibold">Play All</span> {/* Reduced text size */}
                       </motion.div>
                     </motion.div>
                   </a>
-                  <div className="absolute bottom-3 right-3 flex items-center gap-2 bg-black/90 px-3 py-1.5 rounded-full text-xs backdrop-blur-sm">
-                    <Volume2 className="w-3.5 h-3.5" />
+                  <div className="absolute bottom-2 right-2 flex items-center gap-2 bg-black/90 px-2 py-1 rounded-full text-xs backdrop-blur-sm"> {/* Reduced padding and font size */}
+                    <Volume2 className="w-3 h-3" /> {/* Reduced icon size */}
                     <span className="font-medium">Playlist</span>
                   </div>
                 </div>
-                <div className="flex-1 p-6 flex flex-col justify-between space-y-4">
-                  <div className="space-y-2">
-                    <h2 className="text-xl font-semibold leading-tight line-clamp-2">
+                <div className="flex-1 p-4 flex flex-col justify-between space-y-3"> {/* Reduced padding and space-y */}
+                  <div className="space-y-1"> {/* Reduced space-y */}
+                    <h2 className="text-lg font-semibold leading-tight line-clamp-2"> {/* Reduced text size */}
                       {playlist.title}
                     </h2>
                     <p className="text-sm text-gray-400 font-medium">
                       {playlist.channel}
                     </p>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3"> {/* Reduced gap */}
                     <a
                       href={playlist.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block px-6 py-1 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg font-normal transition-all duration-300 hover:from-red-500 hover:to-pink-500 hover:shadow-lg hover:shadow-red-500/25 active:scale-95 text-center"
+                      className="inline-block px-4 py-1 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg font-normal transition-all duration-300 hover:from-red-500 hover:to-pink-500 hover:shadow-lg hover:shadow-red-500/25 active:scale-95 text-center" // Reduced padding
                     >
                       Watch Playlist
                     </a>
                     <button
                       onClick={() => handleBookmarkClick(index)} 
-                      className="p-2.5 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-all duration-300"
+                      className="p-2 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-all duration-300" // Reduced padding
                     >
                       <Bookmark
-                        className={`w-5 h-5 ${
+                        className={`w-4 h-4 ${
                           bookmarkedPlaylists[index]
                             ? "text-purple-500 fill-purple-500" // Bookmarked state
                             : "text-gray-300" // Default state
-                        }`}
+                        }`} // Reduced icon size
                       />
                     </button>
                   </div>
@@ -222,9 +222,9 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowAll(!showAll)}
-            className="w-full max-w-[600px] mt-6 px-6 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-purple-500 hover:via-pink-500 hover:to-purple-500 hover:shadow-lg hover:shadow-purple-500/25"
+            className="w-full max-w-[600px] mt-4 px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-purple-500 hover:via-pink-500 hover:to-purple-500 hover:shadow-lg hover:shadow-purple-500/25" // Reduced padding and margin
           >
-            {showAll ? "Show Less" : "Show More"}
+            {showAll ? "Show Less" : "Show More & Scroll"}
           </motion.button>
         )}
       </motion.div>

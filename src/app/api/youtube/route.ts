@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 import { PrismaClient } from "@prisma/client";
 
-// Types for better type safety
+const prisma = new PrismaClient();
+
 interface PlaylistData {
+  query: string; // Adding query as part of the Playlist data
   title: string;
   link: string;
   thumbnail: string;
@@ -21,14 +23,11 @@ interface ApiError {
   details?: string;
 }
 
-// YouTube Data API configuration
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || "";
 const YOUTUBE_API_URL = process.env.YOUTUBE_API_URL || "https://www.googleapis.com/youtube/v3/search";
-const prisma = new PrismaClient();
 
 export async function GET(request: Request): Promise<NextResponse<ApiResponse | ApiError>> {
   try {
-    // Input validation
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("query")?.trim();
 
@@ -39,40 +38,57 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       );
     }
 
-    // Call YouTube Data API
+    // Check if the query exists in the database
+    const existingPlaylists = await prisma.playlist.findMany({ where: { query } });
+    if (existingPlaylists.length > 0) {
+      return NextResponse.json({
+        playlists: existingPlaylists,
+        timestamp: new Date().toISOString(),
+        query,
+      });
+    }
+
+    // Fetch playlists from the YouTube API
     const response = await axios.get(YOUTUBE_API_URL, {
       params: {
         part: "snippet",
         q: query,
-        type: "playlist", // Filter results to only playlists
-        maxResults: 10, // Limit the number of results
+        type: "playlist",
+        maxResults: 10,
         key: YOUTUBE_API_KEY,
       },
     });
 
-    // Extract playlist data from API response
     const playlists: PlaylistData[] = response.data.items.map((item: any) => ({
+      query, // Storing the query in the Playlist data
       title: item.snippet.title,
       link: `https://www.youtube.com/playlist?list=${item.id.playlistId}`,
       thumbnail: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.default?.url,
       channel: item.snippet.channelTitle,
     }));
 
-    // Save playlists to Prisma
+    // Save playlists to the database
     const savedPlaylists = await Promise.all(
-      playlists.map((playlist) =>
-        prisma.playlist.create({
-          data: {
+      playlists.map(async (playlist) => {
+        return prisma.playlist.upsert({
+          where: { link: playlist.link },
+          update: {
+            title: playlist.title,
+            thumbnail: playlist.thumbnail,
+            channel: playlist.channel,
+            query: playlist.query, // Include the query in the update as well
+          },
+          create: {
+            query: playlist.query, // Include the query in the create operation
             title: playlist.title,
             link: playlist.link,
             thumbnail: playlist.thumbnail,
             channel: playlist.channel,
           },
-        })
-      )
+        });
+      })
     );
 
-    // Return the response with saved playlists and metadata
     return NextResponse.json({
       playlists: savedPlaylists,
       timestamp: new Date().toISOString(),
@@ -80,7 +96,6 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
     });
   } catch (error) {
     console.error("YouTube API error:", error);
-
     return NextResponse.json(
       {
         error: "Failed to fetch YouTube playlists",

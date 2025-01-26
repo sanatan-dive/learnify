@@ -92,26 +92,26 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-6"
+      className="space-y-4" // Reduced space-y-6 to space-y-4
     >
-         {showLoginDialog && (
+      {showLoginDialog && (
         <LoginDialog setShowLoginDialog={setShowLoginDialog} />
       )}
       <motion.div
         variants={itemVariants}
-        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-6 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl flex flex-col gap-8"
+        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-4 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl flex flex-col gap-4" // Reduced padding and gap
       >
-        <motion.h3 className="text-2xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+        <motion.h3 className="text-xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
           Coursera Courses
         </motion.h3>
 
         <div
-          className="overflow-y-auto max-h-[400px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50"
+          className="overflow-y-auto max-h-[250px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-[330px] to max-h-[250px]
           style={{
             scrollbarWidth: "thin",
           }}
         >
-          <div className="space-y-6">
+          <div className="space-y-4"> {/* Reduced space-y-6 to space-y-4 */}
             {displayedCourses.map((course, index) => (
               <motion.div
                 key={index}
@@ -119,20 +119,20 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
                 whileHover={{ scale: 1.02 }}
                 className="bg-gradient-to-r from-[#1b1b1b] to-[#242424] text-white rounded-xl overflow-hidden shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300"
               >
-                <div className="relative w-full h-[150px] group overflow-hidden">
+                <div className="relative w-full h-[100px] group overflow-hidden"> {/* Reduced height */}
                   <Image
                     src={course.thumbnail}
                     alt={course.name}
                     width={400}
-                    height={150}
+                    height={100} // Reduced height
                     className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
                 </div>
 
-                <div className="p-4 space-y-3">
+                <div className="p-2 space-y-1"> {/* Reduced padding */}
                   <div className="space-y-1">
-                    <h3 className="text-lg font-semibold leading-tight">
+                    <h3 className="text-md font-semibold leading-tight"> {/* Reduced text size */}
                       {course.name}
                     </h3>
 
@@ -163,7 +163,7 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
                     </p>
                   </motion.div>
 
-                  <div className="flex items-center justify-between pt-2">
+                  <div className="flex items-center justify-between pt-1"> {/* Reduced padding */}
                     {course.description.split(" ").length > 10 && (
                       <motion.button
                         whileHover={{ scale: 1.05 }}
@@ -180,7 +180,7 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleBookmarkClick(index)}
-                        className="p-1.5 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-all duration-300"
+                        className="p-1 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-all duration-300" // Reduced padding
                       >
                         <Bookmark
                           className={`w-4 h-4 ${
@@ -197,7 +197,7 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
                         href={course.registrationLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25 text-xs group"
+                        className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25 text-xs group" // Reduced padding
                       >
                         Enroll Now
                         <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
@@ -217,9 +217,9 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowAll(!showAll)}
-            className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-purple-500 hover:via-pink-500 hover:to-purple-500 hover:shadow-lg hover:shadow-purple-500/25 text-sm"
+            className="w-full mt-2 px-3 py-1.5 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-purple-500 hover:via-pink-500 hover:to-purple-500 hover:shadow-lg hover:shadow-purple-500/25 text-sm" // Reduced padding and margin
           >
-            {showAll ? "Show Less" : "Show More"}
+            {showAll ? "Show Less" : "Show More & Scroll"}
           </motion.button>
         )}
       </motion.div>

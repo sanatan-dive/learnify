@@ -85,7 +85,7 @@ export const SidebarComponent = ({ isLoading, children }: SidebarComponentProps)
                     href: isSignedIn ? "/profile" : "/sign-in",
                     icon: (
                       <Image
-                        src={user?.imageUrl || "/default-avatar.png"}
+                        src={user?.imageUrl || ""}default-avatar
                         className="h-7 w-7 flex-shrink-0 rounded-full"
                         width={50}
                         height={50}

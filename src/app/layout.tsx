@@ -32,7 +32,7 @@ export default function RootLayout({
       >
         
         <ShootingStars  />
-        <StarsBackground className="-z-50" />
+        <StarsBackground className="-z-40" />
 
      
         {children}

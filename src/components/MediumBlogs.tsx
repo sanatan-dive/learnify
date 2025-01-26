@@ -38,7 +38,7 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
     );
   }
 
-  const displayedBlogs = showAll ? blogs : blogs.slice(0, 3);
+  const displayedBlogs = showAll ? blogs : blogs.slice(0, 2);
 
   const toggleDescription = (index: number) => {
     setExpandedDescriptions((prev) => ({
@@ -81,28 +81,28 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-6"
+      className="space-y-4" // Reduced space-y-6 to space-y-4
     >
       {showLoginDialog && (
         <LoginDialog setShowLoginDialog={setShowLoginDialog} />
       )}
-      
+
       <motion.div
         variants={itemVariants}
-        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-8 flex flex-col gap-8 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl"
+        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-6 flex flex-col gap-6 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl" // Reduced padding and gap
       >
-        <motion.h3 className="text-2xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+        <motion.h3 className="text-xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
           Medium Blogs
         </motion.h3>
 
         {/* Scrollable Container */}
         <div
-          className="overflow-y-auto max-h-[600px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50"
+          className="overflow-y-auto max-h-[550px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50"
           style={{
             scrollbarWidth: "thin", // For Firefox
           }}
         >
-          <div className="space-y-6">
+          <div className="space-y-6"> {/* Reduced space-y-6 to space-y-4 */}
             {displayedBlogs.map((blog, index) => {
               const isDescriptionExpanded = expandedDescriptions[index];
               const description = blog.description || "";
@@ -113,14 +113,14 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
                   key={index}
                   variants={itemVariants}
                   whileHover={{ scale: 1.02 }}
-                  className="bg-gradient-to-r from-[#1b1b1b] to-[#242424] p-8 flex gap-4 rounded-xl shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300"
+                  className="bg-gradient-to-r from-[#1b1b1b] to-[#242424] p-6 flex gap-4 rounded-xl shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300" // Reduced padding
                 >
-                  <div className="space-y-4 flex-1">
-                    <h3 className="text-xl text-white font-bold leading-tight">
+                  <div className="space-y-6 flex-1"> {/* Reduced space-y-4 to space-y-3 */}
+                    <h3 className="text-lg text-white font-bold leading-tight"> {/* Reduced text size */}
                       {blog.title}
                     </h3>
 
-                    <p className="text-sm text-gray-400 font-medium">
+                    <p className="text-xs text-gray-400 font-medium"> {/* Reduced text size */}
                       By {blog.author || "Unknown Author"}
                     </p>
 
@@ -129,7 +129,7 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
                       animate={{ height: "auto" }}
                       className="relative"
                     >
-                      <p className="text-sm text-gray-300 leading-relaxed">
+                      <p className="text-xs text-gray-300 leading-relaxed"> {/* Reduced text size */}
                         {shouldTruncate && !isDescriptionExpanded
                           ? `${description.slice(0, 100)}...`
                           : description}
@@ -139,38 +139,38 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => toggleDescription(index)}
-                          className="text-blue-400 hover:text-blue-300 ml-1 text-sm font-medium focus:outline-none"
+                          className="text-blue-400 hover:text-blue-300 ml-1 text-xs font-medium focus:outline-none" // Reduced text size
                         >
                           {isDescriptionExpanded ? "Read Less" : "Read More"}
                         </motion.button>
                       )}
                     </motion.div>
 
-                    <motion.div className="pt-2 flex items-center justify-between">
+                    <motion.div className="pt-1 flex items-center justify-between"> {/* Reduced padding */}
                       <motion.a
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         href={blog.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25 text-sm group"
+                        className="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25 text-xs group" // Reduced padding and text size
                       >
                         Read Blog
-                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                        <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" /> {/* Reduced icon size */}
                       </motion.a>
 
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.0 }}
                         onClick={() => handleBookmarkClick(index)}
-                        className="p-2 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-all duration-300"
+                        className="p-1.5 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-all duration-300" // Reduced padding
                       >
                         <Bookmark
-                          className={`w-5 h-5 ${
+                          className={`w-4 h-4 ${
                             bookmarkedBlogs[index]
                               ? "text-purple-500 fill-purple-500"
                               : "text-gray-300"
-                          }`}
+                          }`} // Reduced icon size
                         />
                       </motion.button>
                     </motion.div>
@@ -181,16 +181,16 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
           </div>
         </div>
 
-        {blogs.length > 3 && (
+        {blogs.length > 2 && (
           <motion.button
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowAll(!showAll)}
-            className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-purple-500 hover:via-pink-500 hover:to-purple-500 hover:shadow-lg hover:shadow-purple-500/25"
+            className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-purple-500 hover:via-pink-500 hover:to-purple-500 hover:shadow-lg hover:shadow-purple-500/25 text-sm" // Reduced padding and margin
           >
-            {showAll ? "Show Less" : "Show More"}
+            {showAll ? "Show Less" : "Show More & Scroll"}
           </motion.button>
         )}
       </motion.div>

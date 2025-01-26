@@ -1,9 +1,10 @@
-// src/app/api/fetchall/route.ts
 import { NextResponse } from "next/server";
 import axios from "axios";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
-  // Extract the query from the request URL
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("query");
 
@@ -15,8 +16,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Define the API endpoints with absolute URLs
-    const baseUrl = new URL(request.url).origin; // Get the base URL of the application
+    const baseUrl = new URL(request.url).origin;
     const apiEndpoints = [
       { name: "medium", url: `${baseUrl}/api/medium?query=${query}` },
       { name: "coursera", url: `${baseUrl}/api/coursera?query=${query}` },
@@ -24,27 +24,32 @@ export async function GET(request: Request) {
       { name: "youtube", url: `${baseUrl}/api/youtube?query=${query}` },
     ];
 
-    // Use Promise.all to hit all APIs concurrently with axios.get
     const responses = await Promise.all(
       apiEndpoints.map(async (endpoint) => {
         const response = await axios.get(endpoint.url);
         if (response.status !== 200) {
           throw new Error(`Failed to fetch from ${endpoint.name}`);
         }
-        return response.data;
+        return { name: endpoint.name, data: response.data };
       })
     );
 
-    // Combine the responses into a single object
-    const combinedResponse = {
-      medium: responses[0],
-      coursera: responses[1],
-      udemy: responses[2],
-      youtube: responses[3],
+    const mediumBlogs = responses.find((res) => res.name === "medium")?.data || [];
+    const courseraCourses = responses.find((res) => res.name === "coursera")?.data || [];
+    const udemyCourses = responses.find((res) => res.name === "udemy")?.data || [];
+    const youtubePlaylists = responses.find((res) => res.name === "youtube")?.data || [];
+
+    const results = {
+      medium: mediumBlogs,
+      coursera: courseraCourses,
+      udemy: udemyCourses,
+      youtube: youtubePlaylists,
     };
 
-    // Return the combined response
-    return NextResponse.json(combinedResponse);
+    return NextResponse.json({
+      query,
+      results,
+    });
   } catch (error) {
     console.error("Error fetching data from APIs:", error);
     return NextResponse.json(

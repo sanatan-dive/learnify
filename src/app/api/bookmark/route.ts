@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 export async function POST(req: NextRequest) {
   try {
     const { userId } = getAuth(req);
-    const { bookmarkableId, bookmarkableType, details } = await req.json();
+    const { bookmarkableId, bookmarkableType } = await req.json();
 
     if (!userId) {
       return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
@@ -26,79 +26,67 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing bookmarkableId or bookmarkableType" }, { status: 400 });
     }
 
-    // Check if the bookmarkableId exists for the correct type
-    let bookmarkableExists = false;
+    // Check if the bookmarkable ID exists for the provided type
+    let bookmarkData: any = { userId, createdAt: new Date(), updatedAt: new Date() };
+    let uniqueFieldKey = "";
+
     if (bookmarkableType === "Blog") {
       const blog = await prisma.blog.findUnique({
         where: { id: bookmarkableId },
       });
-    
-      if (blog) {
-        bookmarkableExists = true;
+      if (!blog) {
+        return NextResponse.json({ error: "No Blog found with the provided ID" }, { status: 404 });
       }
-    } else if (bookmarkableType === "Course") {
-      const course = await prisma.course.findUnique({
+      bookmarkData.blogLink = blog.link;
+      uniqueFieldKey = "blogLink";
+    } else if (bookmarkableType === "Courseracourse") {
+      const course = await prisma.courseracourse.findUnique({
         where: { id: bookmarkableId },
       });
-      if (course) {
-        bookmarkableExists = true;
+      if (!course) {
+        return NextResponse.json({ error: "No Coursera Course found with the provided ID" }, { status: 404 });
       }
+      bookmarkData.courseraLink = course.registrationLink;
+      uniqueFieldKey = "courseraLink";
+    } else if (bookmarkableType === "Udemycourse") {
+      const course = await prisma.udemycourse.findUnique({
+        where: { id: bookmarkableId },
+      });
+      if (!course) {
+        return NextResponse.json({ error: "No Udemy Course found with the provided ID" }, { status: 404 });
+      }
+      bookmarkData.udemyLink = course.registrationLink;
+      uniqueFieldKey = "udemyLink";
     } else if (bookmarkableType === "Playlist") {
       const playlist = await prisma.playlist.findUnique({
         where: { id: bookmarkableId },
       });
-      if (playlist) {
-        bookmarkableExists = true;
+      if (!playlist) {
+        return NextResponse.json({ error: "No Playlist found with the provided ID" }, { status: 404 });
       }
-    }
-
-    if (!bookmarkableExists) {
-      console.log(bookmarkableId)
-      console.log(`No ${bookmarkableType} found with provided ID`);
-      return NextResponse.json({ error: `No ${bookmarkableType} found with provided ID` }, { status: 404 });
-    }
-
-    let bookmarkData: any = {
-      userId,
-      bookmarkableId,
-      bookmarkableType,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    if (bookmarkableType === "Blog") {
-      const { title, link, author, description } = details.blog;
-      bookmarkData = { 
-        ...bookmarkData, 
-        blogTitle: title,
-        blogLink: link,
-        blogAuthor: author,
-        blogDescription: description,
-      };
-    } else if (bookmarkableType === "Course") {
-      const { name, registrationLink, description, rating, thumbnail, workload } = details.course;
-      bookmarkData = { 
-        ...bookmarkData, 
-        courseName: name,
-        courseLink: registrationLink,
-        courseDescription: description,
-        courseRating: rating,
-        courseThumbnail: thumbnail,
-        courseWorkload: workload,
-      };
-    } else if (bookmarkableType === "Playlist") {
-      const { title, link, thumbnail, channel } = details.playlist;
-      bookmarkData = { 
-        ...bookmarkData, 
-        playlistTitle: title,
-        playlistLink: link,
-        playlistThumbnail: thumbnail,
-        playlistChannel: channel,
-      };
+      bookmarkData.playlistLink = playlist.link;
+      uniqueFieldKey = "playlistLink";
     } else {
       return NextResponse.json({ error: "Invalid bookmarkableType" }, { status: 400 });
     }
 
+    // Check if the bookmark already exists
+    const whereClause: any = {};
+
+if (uniqueFieldKey && bookmarkData[uniqueFieldKey]) {
+  whereClause[uniqueFieldKey] = bookmarkData[uniqueFieldKey];
+}
+
+const existingBookmark = await prisma.bookmark.findUnique({
+  where: whereClause,
+});
+
+
+    if (existingBookmark) {
+      return NextResponse.json({ error: "Bookmark already exists" }, { status: 409 });
+    }
+
+    // Create the bookmark
     const bookmark = await prisma.bookmark.create({
       data: bookmarkData,
     });

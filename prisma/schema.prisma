@@ -20,30 +20,45 @@ model User {
 
 model Blog {
   id          String   @id @default(cuid())
+  query       String
   title       String
-  link        String
+  link        String   @unique
   author      String?
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  bookmarks Bookmark[] @relation("BlogBookmarks")
+  bookmarks   Bookmark[] @relation("BlogBookmarks")
 }
 
-model Course {
+model Courseracourse {
   id               String   @id @default(cuid())
+  query            String
   name             String
-  registrationLink String
+  registrationLink String   @unique
   description      String
-  rating           Float
   thumbnail        String
   workload         String
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  bookmarks Bookmark[] @relation("CourseBookmarks")
+  bookmarks        Bookmark[] @relation("CourseraCourseBookmarks")
+}
+
+model Udemycourse {
+  id               String   @id @default(cuid())
+  query            String
+  name             String
+  registrationLink String   @unique
+  description      String
+  rating           Float
+  thumbnail        String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  bookmarks        Bookmark[] @relation("UdemyCourseBookmarks")
 }
 
 model Playlist {
   id        String   @id @default(cuid())
+  query     String
   title     String
   link      String   @unique
   thumbnail String
@@ -58,34 +73,20 @@ model Bookmark {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
-  bookmarkableId   String
-  bookmarkableType String
-
-  // Fields for Blog
-  blogTitle       String?
-  blogLink        String?
-  blogAuthor      String?
-  blogDescription String?
-
-  // Fields for Course
-  courseName        String?
-  courseLink        String?
-  courseDescription String?
-  courseRating      Float?
-  courseThumbnail   String?
-  courseWorkload    String?
-
-  // Fields for Playlist
-  playlistTitle     String?
-  playlistLink      String?
-  playlistThumbnail String?
-  playlistChannel   String?
+  // Fields to store unique links only
+  blogLink        String? @unique
+  courseraLink    String? @unique
+  udemyLink       String? @unique
+  playlistLink    String? @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relation fields with custom names and unique constraint names
-  blog     Blog?     @relation("BlogBookmarks", fields: [bookmarkableId], references: [id], map: "bookmark_blog_fkey")
-  course   Course?   @relation("CourseBookmarks", fields: [bookmarkableId], references: [id], map: "bookmark_course_fkey")
-  playlist Playlist? @relation("PlaylistBookmarks", fields: [bookmarkableId], references: [id], map: "bookmark_playlist_fkey")
+  // Relations with proper references
+  blog           Blog?           @relation("BlogBookmarks", fields: [blogLink], references: [link], map: "bookmark_blog_fkey")
+  courseraCourse Courseracourse? @relation("CourseraCourseBookmarks", fields: [courseraLink], references: [registrationLink], map: "bookmark_coursera_fkey")
+  udemyCourse    Udemycourse?    @relation("UdemyCourseBookmarks", fields: [udemyLink], references: [registrationLink], map: "bookmark_udemy_fkey")
+  playlist       Playlist?       @relation("PlaylistBookmarks", fields: [playlistLink], references: [link], map: "bookmark_playlist_fkey")
 }
+
+
