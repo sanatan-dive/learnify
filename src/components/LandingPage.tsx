@@ -40,7 +40,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
         const data: ApiResponse = await response.json();
         
         setResponses(data);
-        console.log(data);
+        // console.log(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {

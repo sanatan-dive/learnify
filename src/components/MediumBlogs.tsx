@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Bookmark } from "lucide-react";
-import { useAuth, SignInButton } from "@clerk/nextjs";
+import { useAuth, SignInButton, useUser } from "@clerk/nextjs";
 import LoginDialog from "./LoginDialog";
+import axios from "axios";
 
 interface MediumBlogsProps {
   blogs: {
@@ -24,7 +25,7 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
     [key: number]: boolean;
   }>({});
   const [showLoginDialog, setShowLoginDialog] = useState(false);
-  const { isSignedIn } = useAuth();
+  const { isSignedIn,user } = useUser();
 
   if (!blogs || blogs.length === 0) {
     return (
@@ -47,18 +48,35 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
     }));
   };
 
-  const handleBookmarkClick = (index: number) => {
+  const handleBookmarkClick = async (index: number) => {
     if (!isSignedIn) {
       setShowLoginDialog(true);
       return;
+    }
+
+    const blog = blogs[index];
+    try {
+      const responses = await axios.post('/api/bookmark', {
+        userId: user?.id,
+        bookmarkableId: blog.link, // Use the link as a unique identifier
+        bookmarkableType: 'Blog',
+        details: {
+          blog: {
+            title: blog.title,
+            link: blog.link,
+            author: blog.author,
+            description: blog.description,
+          },
+        },
+      })
+    } catch (error) {
+      
     }
     setBookmarkedBlogs((prev) => ({
       ...prev,
       [index]: !prev[index],
     }));
-    console.log(
-      bookmarkedBlogs[index] ? "Removed from bookmarks" : "Bookmarked blog"
-    );
+ 
   };
 
   const containerVariants = {
@@ -97,7 +115,7 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
 
         {/* Scrollable Container */}
         <div
-          className="overflow-y-auto max-h-[550px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50"
+          className="overflow-y-auto max-h-[565px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50"
           style={{
             scrollbarWidth: "thin", // For Firefox
           }}
@@ -190,7 +208,7 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
             onClick={() => setShowAll(!showAll)}
             className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-purple-500 hover:via-pink-500 hover:to-purple-500 hover:shadow-lg hover:shadow-purple-500/25 text-sm" // Reduced padding and margin
           >
-            {showAll ? "Show Less" : "Show More & Scroll"}
+            {showAll ? "Show Less" : "Show More"}
           </motion.button>
         )}
       </motion.div>

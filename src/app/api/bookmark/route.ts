@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
 
     if (bookmarkableType === "Blog") {
       const blog = await prisma.blog.findUnique({
-        where: { id: bookmarkableId },
+        where: { link: bookmarkableId },
       });
       if (!blog) {
         return NextResponse.json({ error: "No Blog found with the provided ID" }, { status: 404 });
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       uniqueFieldKey = "blogLink";
     } else if (bookmarkableType === "Courseracourse") {
       const course = await prisma.courseracourse.findUnique({
-        where: { id: bookmarkableId },
+        where: { registrationLink: bookmarkableId },
       });
       if (!course) {
         return NextResponse.json({ error: "No Coursera Course found with the provided ID" }, { status: 404 });
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
       uniqueFieldKey = "courseraLink";
     } else if (bookmarkableType === "Udemycourse") {
       const course = await prisma.udemycourse.findUnique({
-        where: { id: bookmarkableId },
+        where: { registrationLink: bookmarkableId },
       });
       if (!course) {
         return NextResponse.json({ error: "No Udemy Course found with the provided ID" }, { status: 404 });
@@ -59,9 +59,10 @@ export async function POST(req: NextRequest) {
       uniqueFieldKey = "udemyLink";
     } else if (bookmarkableType === "Playlist") {
       const playlist = await prisma.playlist.findUnique({
-        where: { id: bookmarkableId },
+        where: { link: bookmarkableId },
       });
       if (!playlist) {
+        // console.log("No Playlist found with the provided ID",bookmarkableId);
         return NextResponse.json({ error: "No Playlist found with the provided ID" }, { status: 404 });
       }
       bookmarkData.playlistLink = playlist.link;
@@ -71,16 +72,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if the bookmark already exists
-    const whereClause: any = {};
+    const whereClause: any = {
+      userId,
+      [uniqueFieldKey]: bookmarkData[uniqueFieldKey],
+    };
 
-if (uniqueFieldKey && bookmarkData[uniqueFieldKey]) {
-  whereClause[uniqueFieldKey] = bookmarkData[uniqueFieldKey];
-}
-
-const existingBookmark = await prisma.bookmark.findUnique({
-  where: whereClause,
-});
-
+    const existingBookmark = await prisma.bookmark.findFirst({
+      where: whereClause,
+    });
 
     if (existingBookmark) {
       return NextResponse.json({ error: "Bookmark already exists" }, { status: 409 });
@@ -93,11 +92,31 @@ const existingBookmark = await prisma.bookmark.findUnique({
 
     return NextResponse.json({ bookmark });
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-    } else {
-      console.error("An unknown error occurred:", error);
-    }
+    console.error(error);
     return NextResponse.json({ error: "Failed to save bookmark" }, { status: 500 });
   }
 }
+
+export async function GET(req: NextRequest) {
+  try {
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+    }
+
+    const bookmarks = await prisma.bookmark.findMany({
+      where: { userId },
+      include: {
+        blog: true,
+        courseraCourse: true,
+        udemyCourse: true,
+        playlist: true,
+      },
+    });
+    return NextResponse.json({ bookmarks });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Failed to fetch bookmarks" }, { status: 500 });
+  }
+}
+

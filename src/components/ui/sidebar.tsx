@@ -85,6 +85,7 @@ export const DesktopSidebar = ({
   ...props
 }: React.ComponentProps<typeof motion.div>) => {
   const { open, setOpen, animate } = useSidebar();
+
   return (
     <>
       <motion.div
@@ -93,10 +94,10 @@ export const DesktopSidebar = ({
           className
         )}
         animate={{
-          width: animate ? (open ? "300px" : "60px") : "300px",
+          width: animate ? (open ? "300px" : "60px") : "300px", // Smooth transition between open and collapsed state
         }}
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
+        onMouseEnter={() => setOpen(true)} // Opens sidebar on hover
+        onMouseLeave={() => setOpen(false)} // Closes sidebar on mouse leave
         {...props}
       >
         {children}
@@ -104,6 +105,7 @@ export const DesktopSidebar = ({
     </>
   );
 };
+
 
 export const MobileSidebar = ({
   className,
@@ -165,6 +167,7 @@ export const SidebarLink = ({
   props?: LinkProps;
 }) => {
   const { open, animate } = useSidebar();
+
   return (
     <Link
       href={link.href}
@@ -178,8 +181,8 @@ export const SidebarLink = ({
 
       <motion.span
         animate={{
-          display: animate ? (open ? "inline-block" : "none") : "inline-block",
-          opacity: animate ? (open ? 1 : 0) : 1,
+          opacity: animate ? (open ? 1 : 0) : 1, // Fade in and out the text
+          display: open ? "inline-block" : "none", // Control text visibility based on open state
         }}
         className="text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
       >

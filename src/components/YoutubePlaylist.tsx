@@ -1,14 +1,10 @@
-import { motion } from "framer-motion";
-import { useState } from "react";
-import { Volume2, Play, Bookmark } from "lucide-react";
-import { useAuth, useUser } from "@clerk/nextjs"; // Import Clerk hooks
-import Image from "next/image";
-import axios from "axios";
-import LoginDialog from "./LoginDialog";
-import { PrismaClient } from "@prisma/client";
-
-// Initialize Prisma client
-const prisma = new PrismaClient();
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { Volume2, Play, Bookmark } from 'lucide-react';
+import { useAuth, useUser } from '@clerk/nextjs'; // Import Clerk hooks
+import Image from 'next/image';
+import axios from 'axios';
+import LoginDialog from './LoginDialog';
 
 interface YouTubePlaylistProps {
   playlists: {
@@ -23,10 +19,10 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
   const [showAll, setShowAll] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [showLoginDialog, setShowLoginDialog] = useState(false); // State for custom dialog
-  const { isSignedIn, user } = useUser(); 
-  const [bookmarkedPlaylists, setBookmarkedPlaylists] = useState<{
-    [key: number]: boolean;
-  }>({}); 
+  const { isSignedIn, user } = useUser();
+  const [bookmarkedPlaylists, setBookmarkedPlaylists] = useState<{ [key: number]: boolean }>(
+    {}
+  );
 
   if (!playlists || playlists.length === 0) {
     return (
@@ -59,28 +55,30 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
 
   const handleBookmarkClick = async (index: number) => {
     if (!isSignedIn) {
-      setShowLoginDialog(true); 
+      setShowLoginDialog(true);
       return;
     }
-  
+
     const playlist = playlists[index];
-  
+    const userId = user?.id;
+
     try {
-      
-      const fetchedPlaylist = await prisma.playlist.findUnique({
-        where: { link: playlist.link }, 
+      // Check if the playlist is already bookmarked
+      const checkResponse = await axios.get('/api/bookmark', {
+        params: { userId, link: playlist.link },
       });
-  
-      if (!fetchedPlaylist) {
-        console.error("Playlist not found in the database");
+
+      if (checkResponse.data.isBookmarked) {
+        // Playlist is already bookmarked, so show a message and return
+        console.log('Playlist already bookmarked.');
         return;
       }
-  
-      // Send API request to save the bookmark using the playlist's ID
-      await axios.post("/api/bookmark", {
-        userId: user?.id, 
-        bookmarkableId: fetchedPlaylist.id, // Use the ID from the fetched playlist
-        bookmarkableType: "Playlist", 
+
+      // If not bookmarked, proceed to bookmark it
+      await axios.post('/api/bookmark', {
+        userId: userId,
+        bookmarkableId: playlist.link, // Use the link as a unique identifier
+        bookmarkableType: 'Playlist',
         details: {
           playlist: {
             title: playlist.title,
@@ -90,22 +88,19 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
           },
         },
       });
-  
-      // Toggle bookmark state for the playlist
+
+      // Update the bookmark state for the specific playlist
       setBookmarkedPlaylists((prev) => ({
         ...prev,
-        [index]: !prev[index], // Toggle the bookmark state for the specific playlist
+        [index]: true, // Set bookmark to true for the specific playlist
       }));
-  
-      console.log(
-        bookmarkedPlaylists[index] ? "Removed from bookmarks" : "Bookmarked playlist"
-      );
+
+      console.log('Bookmarked playlist');
     } catch (error) {
-      console.error("Error saving bookmark:", error);
+      console.error('Error checking or saving bookmark:', error);
     }
   };
-  
-  
+
   return (
     <motion.div
       variants={containerVariants}
@@ -114,9 +109,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
       className="space-y-6"
     >
       {/* Custom Dialog Box */}
-      {showLoginDialog && (
-        <LoginDialog setShowLoginDialog={setShowLoginDialog} />
-      )}
+      {showLoginDialog && <LoginDialog setShowLoginDialog={setShowLoginDialog} />}
 
       <motion.div
         variants={itemVariants}
@@ -128,12 +121,12 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
 
         {/* Scrollable Container */}
         <div
-          className="overflow-y-auto max-h-[500px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-
+          className="overflow-y-auto max-h-[515px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-
           style={{
-            scrollbarWidth: "thin", // For Firefox
+            scrollbarWidth: 'thin', // For Firefox
           }}
         >
-          <div className="space-y-8"> 
+          <div className="space-y-8">
             {displayedPlaylists.map((playlist, index) => (
               <motion.div
                 key={index}
@@ -173,39 +166,39 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
                       </motion.div>
                     </motion.div>
                   </a>
-                  <div className="absolute bottom-2 right-2 flex items-center gap-2 bg-black/90 px-2 py-1 rounded-full text-xs backdrop-blur-sm"> {/* Reduced padding and font size */}
+                  <div className="absolute bottom-2 right-2 flex items-center gap-2 bg-black/90 px-2 py-1 rounded-full text-xs ">
                     <Volume2 className="w-3 h-3" /> {/* Reduced icon size */}
                     <span className="font-medium">Playlist</span>
                   </div>
                 </div>
-                <div className="flex-1 p-4 flex flex-col justify-between space-y-3"> {/* Reduced padding and space-y */}
-                  <div className="space-y-1"> {/* Reduced space-y */}
-                    <h2 className="text-lg font-semibold leading-tight line-clamp-2"> {/* Reduced text size */}
+                <div className="flex-1 p-4 flex flex-col justify-between space-y-3">
+                  <div className="space-y-1">
+                    <h2 className="text-lg font-semibold leading-tight line-clamp-2">
                       {playlist.title}
                     </h2>
                     <p className="text-sm text-gray-400 font-medium">
                       {playlist.channel}
                     </p>
                   </div>
-                  <div className="flex items-center gap-4"> {/* Reduced gap */}
+                  <div className="flex items-center gap-4">
                     <a
                       href={playlist.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block px-4 py-1 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg font-normal transition-all duration-300 hover:from-red-500 hover:to-pink-500 hover:shadow-lg hover:shadow-red-500/25 active:scale-95 text-center" // Reduced padding
+                      className="inline-block px-4 py-1 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg font-normal transition-all duration-300 hover:from-red-500 hover:to-pink-500 hover:shadow-lg hover:shadow-red-500/25 active:scale-95 text-center"
                     >
                       Watch Playlist
                     </a>
                     <button
-                      onClick={() => handleBookmarkClick(index)} 
-                      className="p-2 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-all duration-300" // Reduced padding
+                      onClick={() => handleBookmarkClick(index)}
+                      className="p-2 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-all duration-300"
                     >
                       <Bookmark
                         className={`w-4 h-4 ${
                           bookmarkedPlaylists[index]
-                            ? "text-purple-500 fill-purple-500" // Bookmarked state
-                            : "text-gray-300" // Default state
-                        }`} // Reduced icon size
+                            ? 'text-purple-500 fill-purple-500' // Bookmarked state
+                            : 'text-gray-300' // Default state
+                        }`}
                       />
                     </button>
                   </div>
@@ -222,9 +215,9 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowAll(!showAll)}
-            className="w-full max-w-[600px] mt-4 px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-purple-500 hover:via-pink-500 hover:to-purple-500 hover:shadow-lg hover:shadow-purple-500/25" // Reduced padding and margin
+            className="w-full max-w-[600px] mt-4 px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-purple-500 hover:via-pink-500 hover:to-purple-500 hover:shadow-lg hover:shadow-purple-500/25"
           >
-            {showAll ? "Show Less" : "Show More & Scroll"}
+            {showAll ? 'Show Less' : 'Show More '}
           </motion.button>
         )}
       </motion.div>

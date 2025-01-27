@@ -118,7 +118,8 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
         .slice(0, 10)
         .map((card) => {
           const linkElement = card.querySelector("a") as HTMLElement | null;
-          const name = card.querySelector(selectors.title)?.textContent?.trim() || "";
+          const fullText = linkElement?.textContent?.trim() || '';      
+          const name = fullText.split('<')[0].trim();
           const link = linkElement?.getAttribute("href");
           const description =
             card.querySelector(selectors.description)?.textContent?.trim() || "";

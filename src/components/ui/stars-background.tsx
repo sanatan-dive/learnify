@@ -137,7 +137,7 @@ export const StarsBackground: React.FC<StarBackgroundProps> = ({
   return (
     <canvas
       ref={canvasRef}
-      className={cn("fixed inset-0 w-full h-full bg-gradient-to-br from-[#1f1f1f] to-[#0a0a0a]", className)}
+      className={cn("fixed inset-0 w-full -z-50 h-full bg-gradient-to-br from-[#1f1f1f] to-[#0a0a0a]", className)}
     />
   );
 };

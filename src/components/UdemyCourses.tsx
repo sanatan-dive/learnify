@@ -4,10 +4,11 @@ import Image from "next/image";
 import { useState } from "react";
 import { Star, Bookmark } from "lucide-react";
 import { motion } from "framer-motion";
-import { useAuth, SignInButton } from "@clerk/nextjs"; // Import Clerk hooks
+import { useAuth, SignInButton, useUser } from "@clerk/nextjs"; // Import Clerk hooks
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog"; // Assuming you have a Dialog component
 import { Button } from "@/components/ui/button"; // Assuming you have a Button component
 import LoginDialog from "./LoginDialog";
+import axios from "axios";
 
 interface CourseraCoursesProps {
   courses: {
@@ -22,6 +23,7 @@ interface CourseraCoursesProps {
 
 export default function CourseraCourses({ courses }: CourseraCoursesProps) {
   const [showAll, setShowAll] = useState(false);
+  const { isSignedIn, user } = useUser();
   const [expandedDescriptions, setExpandedDescriptions] = useState<{
     [key: number]: boolean;
   }>({});
@@ -29,7 +31,7 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
     [key: number]: boolean;
   }>({});
   const [showLoginDialog, setShowLoginDialog] = useState(false); // State to control login dialog visibility
-  const { isSignedIn } = useAuth(); // Check if the user is signed in
+ 
 
   if (!courses || courses.length === 0) {
     return (
@@ -60,19 +62,41 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
     }));
   };
 
-  const handleBookmarkClick = (index: number) => {
+
+  const handleBookmarkClick = async (index: number) => {
     if (!isSignedIn) {
       setShowLoginDialog(true); // Show login dialog if user is not signed in
       return;
     }
-    // Toggle bookmark state for the course
+
+    const udemycourse = courses[index];
+   
+
+    try {
+      const response = await axios.post('/api/bookmark', {
+        userId: user?.id,
+        bookmarkableId: udemycourse.registrationLink, 
+        bookmarkableType: 'Udemycourse',
+        detail: {
+          courseracourse: {
+            title: udemycourse.name,
+            link: udemycourse.registrationLink,
+            thumbnail: udemycourse.thumbnail,
+            rating: udemycourse.rating,
+            description: udemycourse.description,
+        }
+        },
+      });
+
+      
+    } catch (error) {
+      
+    }
     setBookmarkedCourses((prev) => ({
       ...prev,
       [index]: !prev[index],
     }));
-    console.log(
-      bookmarkedCourses[index] ? "Removed from bookmarks" : "Bookmarked course"
-    );
+  
   };
 
   const renderRatingStars = (rating: number) => {
@@ -146,7 +170,7 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
 
         {/* Scrollable Container */}
         <div
-          className="overflow-y-auto max-h-[250px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-[400px] to max-h-[250px]
+          className="overflow-y-auto max-h-[260px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-[400px] to max-h-[250px]
           style={{
             scrollbarWidth: "thin", // For Firefox
           }}

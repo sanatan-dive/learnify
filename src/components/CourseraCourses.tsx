@@ -4,8 +4,9 @@ import Image from "next/image";
 import { useState } from "react";
 import { ArrowRight, Bookmark } from "lucide-react";
 import { motion } from "framer-motion";
-import { useAuth, SignInButton } from "@clerk/nextjs";
+import { useAuth, SignInButton, useUser } from "@clerk/nextjs";
 import LoginDialog from "./LoginDialog";
+import axios from "axios";
 
 interface CourseraCoursesProps {
   courses: {
@@ -24,7 +25,7 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
     [key: number]: boolean;
   }>({});
   const [showLoginDialog, setShowLoginDialog] = useState(false);
-  const { isSignedIn } = useAuth();
+  const { isSignedIn,user } = useUser();
   const [bookmarkedCourses, setBookmarkedCourses] = useState<{
     [key: number]: boolean;
   }>({});
@@ -58,18 +59,36 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
     }));
   };
 
-  const handleBookmarkClick = (index: number) => {
+  const handleBookmarkClick = async (index: number) => {
     if (!isSignedIn) {
       setShowLoginDialog(true);
       return;
+    }
+    const courseracourse = courses[index];
+    
+    try {
+    const response = await axios.post('/api/bookmark', {
+      userId: user?.id,
+      bookmarkableId: courseracourse.registrationLink, 
+      bookmarkableType: 'Courseracourse',
+      detail: {
+        courseracourse: {
+          title: courseracourse.name,
+          link: courseracourse.registrationLink,
+          thumbnail: courseracourse.thumbnail,
+          workload: courseracourse.workload,
+          description: courseracourse.description,
+      }
+      },
+    })  
+    } catch (error) {
+      
     }
     setBookmarkedCourses((prev) => ({
       ...prev,
       [index]: !prev[index],
     }));
-    console.log(
-      bookmarkedCourses[index] ? "Removed from bookmarks" : "Bookmarked course"
-    );
+   
   };
 
   const containerVariants = {
@@ -99,14 +118,14 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
       )}
       <motion.div
         variants={itemVariants}
-        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-4 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl flex flex-col gap-4" // Reduced padding and gap
+        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-4 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl flex flex-col gap-4" 
       >
         <motion.h3 className="text-xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
           Coursera Courses
         </motion.h3>
 
         <div
-          className="overflow-y-auto max-h-[250px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-[330px] to max-h-[250px]
+          className="overflow-y-auto max-h-[220px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" 
           style={{
             scrollbarWidth: "thin",
           }}
@@ -219,7 +238,7 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
             onClick={() => setShowAll(!showAll)}
             className="w-full mt-2 px-3 py-1.5 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white rounded-lg font-medium transition-all duration-300 hover:from-purple-500 hover:via-pink-500 hover:to-purple-500 hover:shadow-lg hover:shadow-purple-500/25 text-sm" // Reduced padding and margin
           >
-            {showAll ? "Show Less" : "Show More & Scroll"}
+            {showAll ? "Show Less" : "Show More"}
           </motion.button>
         )}
       </motion.div>
