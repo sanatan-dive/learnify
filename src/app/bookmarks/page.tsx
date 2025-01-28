@@ -6,8 +6,38 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { SidebarComponent } from "@/components/SidebarComponent";
 
+// Add these interfaces at the top of your file
+interface Bookmark {
+  id: string;
+  playlist?: {
+    title: string;
+    channel: string;
+    link: string;
+  };
+  courseraCourse?: {
+    name: string;
+    description: string;
+    registrationLink: string;
+  };
+  udemyCourse?: {
+    name: string;
+    description: string;
+    registrationLink: string;
+  };
+  blog?: {
+    title: string;
+    description: string;
+    link: string;
+  };
+}
+
+interface LinkButtonProps {
+  href: string;
+  children: React.ReactNode;
+}
+
 function Bookmarks() {
-  const [bookmarks, setBookmarks] = useState([]);
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedDescriptions, setExpandedDescriptions] = useState<{
@@ -53,11 +83,83 @@ function Bookmarks() {
 
   if (loading) {
     return (
-      <div className="grid gap-4 p-4">
-        {[...Array(4)].map((_, i) => (
-          <Skeleton key={i} className="h-24 w-full rounded-lg" />
-        ))}
-      </div>
+      <SidebarComponent isLoading={loading}>
+        <div className="p-6 space-y-8">
+          {/* Header Skeleton */}
+          <Skeleton className="h-10 w-48 mb-8" />
+          
+          {/* Playlists Section */}
+          <section className="space-y-6">
+            <Skeleton className="h-8 w-32" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+              {[1, 2, 3,4,5].map((i) => (
+                <Card
+                  key={i}
+                  className="relative bg-gradient-to-r from-[#1b1b1b] to-[#242424] border border-gray-800/50 rounded-xl max-w-2xl shadow-lg"
+                >
+                  <CardHeader className="pb-3">
+                    <Skeleton className="h-6 w-3/4" />
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-10 w-32 rounded-lg bg-gradient-to-r from-blue-600/30 to-purple-600/30" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+  
+          {/* Courses Section */}
+          <section className="space-y-6">
+            <Skeleton className="h-8 w-32" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <Card
+                  key={i}
+                  className="relative bg-gradient-to-r from-[#1b1b1b] to-[#242424] border border-gray-800/50 rounded-xl shadow-lg"
+                >
+                  <CardHeader className="pb-3">
+                    <Skeleton className="h-6 w-3/4" />
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-5/6" />
+                      <Skeleton className="h-4 w-4/6" />
+                    </div>
+                    <Skeleton className="h-10 w-32 rounded-lg bg-gradient-to-r from-blue-600/30 to-purple-600/30" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+  
+          {/* Blogs Section */}
+          <section className="space-y-6">
+            <Skeleton className="h-8 w-32" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <Card
+                  key={i}
+                  className="relative bg-gradient-to-r from-[#1b1b1b] to-[#242424] border border-gray-800/50 rounded-xl shadow-lg"
+                >
+                  <CardHeader className="pb-3">
+                    <Skeleton className="h-6 w-3/4" />
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-5/6" />
+                      <Skeleton className="h-4 w-4/6" />
+                    </div>
+                    <Skeleton className="h-10 w-32 rounded-lg bg-gradient-to-r from-blue-600/30 to-purple-600/30" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        </div>
+      </SidebarComponent>
     );
   }
 
@@ -69,7 +171,7 @@ function Bookmarks() {
     );
   }
 
-  const LinkButton = ({ href, children }) => (
+  const LinkButton: React.FC<LinkButtonProps> = ({ href, children }) => (
     <a
       href={href}
       target="_blank"

@@ -9,6 +9,7 @@ import MediumBlogs from "@/components/MediumBlogs";
 import CourseraCourses from "@/components/CourseraCourses";
 import UdemyCourses from "@/components/UdemyCourses";
 import { ApiResponse } from "@/types";
+import SkeletonLoader from "@/components/Loading";
 
 interface LandingPageContentProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -115,9 +116,9 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.3 }}
-            className="flex flex-col items-center gap-6"
+            className="flex flex-col items-center w-full max-w-8xl"
           >
-            <WorldResourceLoader />
+            <SkeletonLoader/>
           </motion.div>
         ) : (
           <motion.div
