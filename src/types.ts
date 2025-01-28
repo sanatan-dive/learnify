@@ -22,7 +22,9 @@ export interface Playlist {
 }
 
 export interface ApiResponse {
-  medium?: {
+  results: {
+    medium?: {
+
       blogs: Blog[];
       timestamp: string;
       query: string;
@@ -40,4 +42,7 @@ export interface ApiResponse {
       timestamp: string;
       query: string;
   };
+      
+  }
+
 }
