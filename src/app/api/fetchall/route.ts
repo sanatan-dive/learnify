@@ -17,6 +17,8 @@ export async function GET(request: Request) {
 
   try {
     const baseUrl = new URL(request.url).origin;
+
+    // Set up the API endpoints
     const apiEndpoints = [
       { name: "medium", url: `${baseUrl}/api/medium?query=${query}` },
       { name: "coursera", url: `${baseUrl}/api/coursera?query=${query}` },
@@ -24,27 +26,16 @@ export async function GET(request: Request) {
       { name: "youtube", url: `${baseUrl}/api/youtube?query=${query}` },
     ];
 
+    // Make parallel requests to the APIs
     const responses = await Promise.all(
-      apiEndpoints.map(async (endpoint) => {
-        const response = await axios.get(endpoint.url);
-        if (response.status !== 200) {
-          throw new Error(`Failed to fetch from ${endpoint.name}`);
-        }
-        return { name: endpoint.name, data: response.data };
-      })
+      apiEndpoints.map((endpoint) => axios.get(endpoint.url).catch(() => null)) // Catch errors and prevent breaking
     );
 
-    const mediumBlogs = responses.find((res) => res.name === "medium")?.data || [];
-    const courseraCourses = responses.find((res) => res.name === "coursera")?.data || [];
-    const udemyCourses = responses.find((res) => res.name === "udemy")?.data || [];
-    const youtubePlaylists = responses.find((res) => res.name === "youtube")?.data || [];
-
-    const results = {
-      medium: mediumBlogs,
-      coursera: courseraCourses,
-      udemy: udemyCourses,
-      youtube: youtubePlaylists,
-    };
+    // Parse the responses into a results object
+    const results = apiEndpoints.reduce((acc, endpoint, index) => {
+      acc[endpoint.name] = responses[index]?.data || [];
+      return acc;
+    }, {} as Record<string, any>);
 
     return NextResponse.json({
       query,
