@@ -15,7 +15,7 @@ const TopicSchema = z.object({
 export const runtime = 'edge';
 
 function generatePrompt(topic: string) {
-  return `You are an expert in educational curriculum design. Your task is to create a structured and highly effective learning roadmap for mastering ${topic}. 
+  return `You are an expert in educational curriculum design. Your task is to create a structured, professional, and highly effective learning roadmap for mastering ${topic}. The roadmap should align with the latest industry trends and best practices.
 
 The roadmap should be divided into three well-defined phases: Fundamentals, Intermediate, and Advanced. Each phase must focus on progressively deepening the learner's understanding. Ensure that the topics are comprehensive, logically ordered, and practical for real-world application.
 
@@ -23,23 +23,35 @@ Structure your response exactly as follows:
 
 Phase 1: Fundamentals
 - Key foundational concept 1
+  - Brief description 
 - Key foundational concept 2
+  - Brief description 
 - Key foundational concept 3
+  - Brief description
 - Additional essential topic if necessary
+  - Brief description 
 
 Phase 2: Intermediate
 - Intermediate-level concept 1
+  - Brief description 
 - Intermediate-level concept 2
+  - Brief description 
 - Intermediate-level concept 3
+  - Brief description 
 - Additional important topic if necessary
+  - Brief description 
 
 Phase 3: Advanced
 - Advanced concept 1
+  - Brief description 
 - Advanced concept 2
+  - Brief description 
 - Advanced concept 3
+  - Brief description 
 - Cutting-edge or specialized topic if applicable
+  - Brief description 
 
-Ensure that each topic is specific, relevant, and actionable for someone learning ${topic}. Exclude any introductory explanations or unnecessary text. The response must be concise, structured, and easy to follow.`;
+Ensure that each topic is specific, relevant, and actionable for someone learning ${topic}. Exclude any introductory explanations, unnecessary text, or formatting like quotes or markdown. The response must be concise, structured, and easy to follow.`;
 }
 
 function parseResponse(text: string) {
@@ -51,10 +63,29 @@ function parseResponse(text: string) {
     if (lines.length === 0) continue;
 
     const phaseTitle = lines[0].split(':')[0].trim();
-    const topics = lines
-      .slice(1)
-      .filter(line => line.startsWith('-'))
-      .map(line => line.replace('-', '').trim());
+    const topics = [];
+    let currentTopic = '';
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+
+      if (line.startsWith('-')) {
+        if (currentTopic) {
+          topics.push(currentTopic);
+        }
+        currentTopic = line.replace('-', '').trim();
+      } else if (line.startsWith('  -')) {
+        const description = line.replace('  -', '').trim();
+        if (currentTopic) {
+          topics.push(`${currentTopic}: ${description}`);
+          currentTopic = '';
+        }
+      }
+    }
+
+    if (currentTopic) {
+      topics.push(currentTopic);
+    }
 
     if (phaseTitle && topics.length > 0) {
       steps.push({
@@ -86,14 +117,22 @@ export async function POST(request: NextRequest) {
       throw new Error('No response generated');
     }
 
+    // Clean the response text
+    const cleanedText = generatedText
+      .replace(/"/g, '') // Remove quotes
+      .replace(/```/g, '') // Remove markdown code blocks
+      .trim();
+
     // Parse the response into structured format
-    const steps = parseResponse(generatedText);
+    const steps = parseResponse(cleanedText);
 
     // Create final roadmap
     const roadmap = {
       title: `Learning Roadmap for ${topic}`,
       steps: steps
     };
+
+    // console.log('Generated roadmap:', roadmap);
 
     return NextResponse.json(roadmap);
   } catch (error) {
