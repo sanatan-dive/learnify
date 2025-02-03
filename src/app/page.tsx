@@ -7,50 +7,49 @@ import { useRouter } from "next/navigation";
 import { Marquee } from "@/components/ui/marquee";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-
+import { SidebarComponent } from "@/components/SidebarComponent";
 
 const reviews = [
   {
-    name: "Alice",
-    username: "@alice",
+    name: "Amit",
+    username: "@amit",
     body: "This platform helped me create a roadmap for my AI project in minutes! Highly recommended.",
-    img: "https://avatar.vercel.sh/alice",
+    img: "https://avatar.vercel.sh/amit",
   },
   {
-    name: "Bob",
-    username: "@bob",
+    name: "Neha",
+    username: "@neha",
     body: "I love how easy it is to generate personalized roadmaps. It saved me so much time!",
-    img: "https://avatar.vercel.sh/bob",
+    img: "https://avatar.vercel.sh/neha",
   },
   {
-    name: "Charlie",
-    username: "@charlie",
+    name: "Raj",
+    username: "@raj",
     body: "The AI-generated roadmaps are incredibly detailed and tailored to my needs. Amazing tool!",
-    img: "https://avatar.vercel.sh/charlie",
+    img: "https://avatar.vercel.sh/raj",
   },
   {
-    name: "Diana",
-    username: "@diana",
+    name: "Priya",
+    username: "@priya",
     body: "I was stuck on my project, but this platform gave me a clear direction. Thank you!",
-    img: "https://avatar.vercel.sh/diana",
+    img: "https://avatar.vercel.sh/priya",
   },
   {
-    name: "Eve",
-    username: "@eve",
+    name: "Vikram",
+    username: "@vikram",
     body: "The roadmaps are so intuitive and easy to follow. Perfect for beginners and experts alike.",
-    img: "https://avatar.vercel.sh/eve",
+    img: "https://avatar.vercel.sh/vikram",
   },
   {
-    name: "Frank",
-    username: "@frank",
+    name: "Anjali",
+    username: "@anjali",
     body: "This is exactly what I needed to organize my project. The AI suggestions are spot on!",
-    img: "https://avatar.vercel.sh/frank",
+    img: "https://avatar.vercel.sh/anjali",
   },
 ];
 
 const firstRow = reviews.slice(0, reviews.length / 2);
 const secondRow = reviews.slice(reviews.length / 2);
-
 
 const ReviewCard = ({
   img,
@@ -62,7 +61,7 @@ const ReviewCard = ({
   name: string;
   username: string;
   body: string;
-})=> {
+}) => {
   return (
     <figure className="relative w-64 cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white p-4 transition-all hover:scale-105 hover:shadow-lg">
       <div className="flex flex-row items-center gap-2">
@@ -88,7 +87,7 @@ export default function Home() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value);
 
-  const onSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -103,7 +102,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen  flex flex-col gap-8 justify-center items-center">
+    
+    <div className="min-h-screen flex flex-col gap-8 justify-center items-center w-full">
+      
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -117,13 +118,14 @@ export default function Home() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
       >
+        <div className="flex justify-center items-center">
         <PlaceholdersAndVanishInput
-          
           placeholders={placeholders}
           onChange={handleChange}
           onSubmit={onSubmit}
           disabled={isLoading}
         />
+        </div>
       </motion.div>
 
       <motion.div
@@ -131,7 +133,7 @@ export default function Home() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
       >
-        <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden rounded-lg">
+        <div className="relative flex h-[500px] w-full flex-col items-center justify-center  overflow-hidden rounded-lg">
           <Marquee pauseOnHover className="[--duration:20s]">
             {firstRow.map((review) => (
               <ReviewCard key={review.username} {...review} />
@@ -142,18 +144,21 @@ export default function Home() {
               <ReviewCard key={review.username} {...review} />
             ))}
           </Marquee>
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-[#1f1f1f]"></div>
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-[#1f1f1f]"></div>
+          <div className="pointer-events-none absolute inset-y-0  left-0 w-1/3 bg-gradient-to-r from-[#171717]"></div>
+          <div className="pointer-events-none absolute inset-y-0 right-0  w-1/3 bg-gradient-to-l from-[#171717]"></div>
         </div>
-        
       </motion.div>
+      
+      
 
       {isLoading && (
         <div className="flex flex-col items-center gap-2">
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
-          <p className="text-white">Loading...</p>
+        
         </div>
       )}
+      
     </div>
+    
   );
 }

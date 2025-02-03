@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.10.0",
+    "@google/generative-ai": "^0.21.0",
     "@prisma/client": "^6.2.1",
     "@radix-ui/react-dialog": "^1.1.5",
     "@radix-ui/react-slot": "^1.1.1",
@@ -22,6 +23,7 @@
     "dotenv": "^16.4.7",
     "dotted-map": "^2.2.3",
     "framer-motion": "^12.0.1",
+    "html-to-image": "^1.11.11",
     "lucide-react": "^0.473.0",
     "motion": "^12.0.0-alpha.2",
     "next": "15.1.5",

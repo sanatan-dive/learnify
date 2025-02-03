@@ -35,10 +35,10 @@ export default function LandingPage() {
   }, [isSignedIn, user]);
   return (
     <div className="flex">
-      <SidebarComponent isLoading={isLoading} >
+      
      
         <LandingPageContent setIsLoading={setIsLoading} />
-      </SidebarComponent>
+
 
     </div>
   );

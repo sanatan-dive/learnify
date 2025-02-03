@@ -132,7 +132,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
                 key={index}
                 variants={itemVariants}
                 whileHover={{ scale: 1.02 }}
-                className="w-full max-w-[600px] bg-gradient-to-b from-[#1b1b1b] to-[#242424] text-white flex 2xl:flex-row flex-col rounded-xl overflow-hidden shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300"
+                className="w-full max-w-[600px] bg-gradient-to-b from-[#1b1b1b] to-[#242424] text-white flex lg:flex-row flex-col rounded-xl overflow-hidden shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300"
               >
                 <div
                   className="relative flex-shrink-0 w-full md:w-[200px] justify-center items-center flex lg:w-[250px] group" // Reduced width

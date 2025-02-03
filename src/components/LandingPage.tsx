@@ -1,4 +1,3 @@
-"use client";
 import React, { useState as useStateHook, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -10,6 +9,7 @@ import CourseraCourses from "@/components/CourseraCourses";
 import UdemyCourses from "@/components/UdemyCourses";
 import { ApiResponse } from "@/types";
 import SkeletonLoader from "@/components/Loading";
+import { RainbowButton } from "./ui/rainbow-button";
 
 interface LandingPageContentProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -41,7 +41,6 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
         const data: ApiResponse = await response.json();
         
         setResponses(data);
-        // console.log(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -63,6 +62,14 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
       router.push(`/landing?query=${encodeURIComponent(searchQuery)}`);
     }
   };
+
+  const onRoadmap = ()=>{
+
+    if (searchQuery.trim()) {
+      router.push(`/roadmap?query=${encodeURIComponent(searchQuery)}`);
+    }
+
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -87,9 +94,20 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
       },
     },
   };
-  
+
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-10 w-full text-white">
+    <div className="min-h-screen flex flex-col justify-center items-center p-10 w-full text-white relative">
+      {/* Generate Roadmap Button */}
+        <RainbowButton
+        onClick={onRoadmap}
+        className="absolute top-4 right-4 px-6 py-2 bg-gradient-to-r from-[#4f9fff] via-[#9e42ff] to-[#4f9fff]  text-white rounded-full shadow-lg hover:opacity-80 transition hover:scale-105 "
+      >
+        Generate a Roadmap
+      
+      </RainbowButton>
+        
+      
+
       <AnimatePresence mode="wait">
         {!localIsLoading && (
           <motion.div
@@ -128,7 +146,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
             animate="visible"
             className="w-full max-w-8xl"
           >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10  ">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
               {responses && (
                 <>
                   <YouTubePlaylist playlists={responses?.results?.youtube?.playlists || []} />
@@ -140,7 +158,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
                       <CourseraCourses courses={responses?.results?.coursera?.courses || []} />
                     </div>
                     <div>
-                      <UdemyCourses  courses={responses?.results?.udemy?.courses || []} />
+                      <UdemyCourses courses={responses?.results?.udemy?.courses || []} />
                     </div>
                   </motion.div>
                   <MediumBlogs blogs={responses?.results?.medium?.blogs || []} />

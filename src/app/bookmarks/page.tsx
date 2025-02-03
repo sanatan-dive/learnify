@@ -83,7 +83,7 @@ function Bookmarks() {
 
   if (loading) {
     return (
-      <SidebarComponent isLoading={loading}>
+      
         <div className="p-6 space-y-8">
           {/* Header Skeleton */}
           <Skeleton className="h-10 w-48 mb-8" />
@@ -159,7 +159,7 @@ function Bookmarks() {
             </div>
           </section>
         </div>
-      </SidebarComponent>
+      
     );
   }
 
@@ -197,9 +197,9 @@ function Bookmarks() {
   );
 
   return (
-    <SidebarComponent isLoading={loading}>
+    
       <div className="p-6 overflow-auto space-y-8">
-        <h1 className="text-3xl fixed font-bold z-50 mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+        <h1 className="text-3xl  font-bold  bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
           Your Bookmarks
         </h1>
 
@@ -337,7 +337,7 @@ function Bookmarks() {
           )}
         </section>
       </div>
-    </SidebarComponent>
+    
   );
 }
 

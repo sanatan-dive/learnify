@@ -7,13 +7,13 @@ const SkeletonLoader = () => {
     <div className="min-h-screen flex flex-col justify-center items-center w-full">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 w-full px-4 sm:px-8">
         {/* YouTube Playlist Section */}
-        <Card className="bg-gray-800/50 border-gray-700 w-full">
+        <Card className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] border-gray-700 w-full shadow-2xl">
           <CardHeader className="space-y-2">
             <Skeleton className="h-6 w-32 bg-gray-700" />
             <Skeleton className="h-4 w-24 bg-gray-700" />
           </CardHeader>
           <CardContent className="space-y-4">
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3,4,5].map((i) => (
               <div key={i} className="flex gap-4">
                 <Skeleton className="h-20 w-32 bg-gray-700" />
                 <div className="space-y-2 flex-1">
@@ -28,7 +28,7 @@ const SkeletonLoader = () => {
         {/* Coursera and Udemy Section */}
         <div className="flex flex-col gap-8 w-full">
           {/* Coursera */}
-          <Card className="bg-gray-800/50 border-gray-700 w-full">
+          <Card className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] border-gray-700 w-full shadow-2xl">
             <CardHeader>
               <Skeleton className="h-6 w-32 bg-gray-700" />
             </CardHeader>
@@ -44,7 +44,7 @@ const SkeletonLoader = () => {
           </Card>
 
           {/* Udemy */}
-          <Card className="bg-gray-800/50 border-gray-700 w-full">
+          <Card className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] border-gray-700 w-full shadow-2xl">
             <CardHeader>
               <Skeleton className="h-6 w-32 bg-gray-700" />
             </CardHeader>
@@ -61,7 +61,7 @@ const SkeletonLoader = () => {
         </div>
 
         {/* Medium Blogs Section */}
-        <Card className="bg-gray-800/50 border-gray-700 w-full">
+        <Card className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] border-gray-700 w-full shadow-2xl">
           <CardHeader>
             <Skeleton className="h-6 w-32 bg-gray-700" />
           </CardHeader>

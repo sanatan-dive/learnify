@@ -1,9 +1,11 @@
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import {  StarsBackground } from "@/components/ui/stars-background";
 import { ShootingStars } from "@/components/ui/shooting-stars";
 import {ClerkProvider} from "@clerk/nextjs";
+import { SidebarComponent } from "@/components/SidebarComponent";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,14 +30,15 @@ export default function RootLayout({
     <ClerkProvider>
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable}  antialiased`}
       >
-        
+        <SidebarComponent isLoading={false}>
         <ShootingStars  />
         <StarsBackground className="-z-40" />
 
      
         {children}
+        </SidebarComponent>
       </body>
     </html>
     </ClerkProvider>
