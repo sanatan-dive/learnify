@@ -178,10 +178,11 @@ export function PlaceholdersAndVanishInput({
   };
   return (
     <form
-      className={cn(
-        "w-[500px] relative max-w-xl mx-auto bg-[#1f1f1f] border-[#2d2d2d] border-2 text-bold text-white h-12 rounded-full overflow-hidden shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200",
-        value && "bg-[#2d2d2d]"
-      )}
+    className={cn(
+      "w-[600px] relative mx-auto bg-gradient-to-r from-[#1f385d] to-[#051d38] border-[#aab6cb] border-2 text-bold text-white h-12 rounded-full overflow-hidden shadow-md transition duration-200",
+      value && "bg-[#3e4a5d]"
+    )}
+    
       onSubmit={handleSubmit}
     >
       <canvas
@@ -211,7 +212,7 @@ export function PlaceholdersAndVanishInput({
       <button
         disabled={!value}
         type="submit"
-        className="absolute right-2 border-2 top-1/2 z-50 -translate-y-1/2 h-8 w-8 rounded-full disabled:bg-[#1f1f1f] bg-[#2d2d2d] transition duration-200 flex items-center justify-center"
+        className="absolute right-2 border-2 top-1/2 z-50 -translate-y-1/2 h-8 w-8 rounded-full disabled:bg-[#31476a] bg-[#072035] transition duration-200 flex items-center justify-center"
       >
         <motion.svg
           xmlns="http://www.w3.org/2000/svg"
@@ -266,7 +267,7 @@ export function PlaceholdersAndVanishInput({
                 duration: 0.3,
                 ease: "linear",
               }}
-              className="text-[#a9a9a9] text-sm sm:text-base font-normal pl-4 sm:pl-12 text-left w-[calc(100%-2rem)] truncate"
+              className="text-[#b2bdd2] text-sm sm:text-base font-normal pl-4 sm:pl-12 text-left w-[calc(100%-2rem)] truncate"
             >
               {placeholders[currentPlaceholder]}
             </motion.p>
