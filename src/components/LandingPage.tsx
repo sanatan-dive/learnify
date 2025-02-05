@@ -23,7 +23,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
   const [responses, setResponses] = useStateHook<ApiResponse | null>(null);
   const [localIsLoading, setLocalIsLoading] = useStateHook(false);
 
-  const placeholders = ["Enter your Topic", "Generate a Roadmap"];
+  const placeholders = ["Enter your Topic", "Learn Anything", "Master Anything"];
 
   useEffect(() => {
     if (!query) return;
@@ -98,13 +98,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
   return (
     <div className="min-h-screen flex flex-col justify-center items-center p-10 w-full text-white relative">
       {/* Generate Roadmap Button */}
-        <RainbowButton
-        onClick={onRoadmap}
-        className="absolute top-4 right-4 px-6 py-2 bg-gradient-to-r from-[#4f9fff] via-[#9e42ff] to-[#4f9fff]  text-white rounded-full shadow-lg hover:opacity-80 transition hover:scale-105 "
-      >
-        Generate a Roadmap
       
-      </RainbowButton>
         
       
 
@@ -146,6 +140,13 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
             animate="visible"
             className="w-full max-w-8xl"
           >
+              <RainbowButton
+        onClick={onRoadmap}
+        className="absolute top-4 right-4 px-6 py-2 bg-gradient-to-r from-[#467cbf] via-[#0016d6] to-[#467cbf]  text-white rounded-full shadow-lg hover:opacity-80 transition hover:scale-105 "
+      >
+        Generate a Roadmap
+      
+      </RainbowButton>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
               {responses && (
                 <>

@@ -107,9 +107,9 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
 
       <motion.div
         variants={itemVariants}
-        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-8 flex flex-col gap-8 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl" // Reduced padding and gap
+        className="bg-gradient-to-b from-gray-900 to-gray-950 p-6 flex flex-col gap-8 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl" // Reduced padding and gap
       >
-        <motion.h3 className="text-xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+        <motion.h3 className="text-2xl text-center font-bold bg-clip-text text-transparent bg-gray-50">
           Medium Blogs
         </motion.h3>
 
@@ -131,7 +131,7 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
                   key={index}
                   variants={itemVariants}
                   whileHover={{ scale: 1.02 }}
-                  className="bg-gradient-to-r from-[#1b1b1b] to-[#242424] p-6 flex gap-6 rounded-xl shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300" // Reduced padding
+                  className="bg-gradient-to-r from-gray-800 to-gray-900  p-6 flex gap-6 rounded-xl shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300" // Reduced padding
                 >
                   <div className="space-y-7 flex-1"> {/* Reduced space-y-4 to space-y-3 */}
                     <h3 className="text-lg text-white font-bold leading-tight"> {/* Reduced text size */}

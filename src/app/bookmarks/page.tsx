@@ -95,7 +95,7 @@ function Bookmarks() {
               {[1, 2, 3,4,5].map((i) => (
                 <Card
                   key={i}
-                  className="relative bg-gradient-to-r from-[#1b1b1b] to-[#242424] border border-gray-800/50 rounded-xl max-w-2xl shadow-lg"
+                  className="relative bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-800/50 rounded-xl max-w-2xl shadow-lg"
                 >
                   <CardHeader className="pb-3">
                     <Skeleton className="h-6 w-3/4" />
@@ -116,7 +116,7 @@ function Bookmarks() {
               {[1, 2, 3].map((i) => (
                 <Card
                   key={i}
-                  className="relative bg-gradient-to-r from-[#1b1b1b] to-[#242424] border border-gray-800/50 rounded-xl shadow-lg"
+                  className="relative bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-800/50 rounded-xl shadow-lg"
                 >
                   <CardHeader className="pb-3">
                     <Skeleton className="h-6 w-3/4" />
@@ -141,7 +141,7 @@ function Bookmarks() {
               {[1, 2, 3].map((i) => (
                 <Card
                   key={i}
-                  className="relative bg-gradient-to-r from-[#1b1b1b] to-[#242424] border border-gray-800/50 rounded-xl shadow-lg"
+                  className="relative bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-800/50 rounded-xl shadow-lg"
                 >
                   <CardHeader className="pb-3">
                     <Skeleton className="h-6 w-3/4" />
@@ -213,7 +213,7 @@ function Bookmarks() {
               {playlists.map((bookmark) => (
                 <Card
                   key={bookmark.id}
-                  className="relative bg-gradient-to-r from-[#1b1b1b] to-[#242424] border border-gray-800/50 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+                  className="relative bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-800/50 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
                 >
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg text-white">
@@ -244,7 +244,7 @@ function Bookmarks() {
               {courses.map((bookmark) => (
                 <Card
                   key={bookmark.id}
-                  className="relative bg-gradient-to-r from-[#1b1b1b] to-[#242424] border border-gray-800/50 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+                  className="relative bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-800/50 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
                 >
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg text-white">
@@ -304,7 +304,7 @@ function Bookmarks() {
               {blogs.map((bookmark) => (
                 <Card
                   key={bookmark.id}
-                  className="relative bg-gradient-to-r from-[#1b1b1b] to-[#242424] border border-gray-800/50 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+                  className="relative bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-800/50 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
                 >
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg text-white">

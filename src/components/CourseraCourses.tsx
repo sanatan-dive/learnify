@@ -118,9 +118,9 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
       )}
       <motion.div
         variants={itemVariants}
-        className="bg-gradient-to-b from-[#1b1b1b] to-[#242424] p-4 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl flex flex-col gap-4" 
+        className="bg-gradient-to-b from-gray-900 to-gray-950 p-4 rounded-2xl shadow-2xl border border-gray-800/50 backdrop-blur-xl flex flex-col gap-4" 
       >
-        <motion.h3 className="text-xl text-center font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+        <motion.h3 className="text-xl text-center font-bold bg-clip-text text-transparent bg-gray-50">
           Coursera Courses
         </motion.h3>
 
@@ -136,7 +136,7 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
                 key={index}
                 variants={itemVariants}
                 whileHover={{ scale: 1.02 }}
-                className="bg-gradient-to-r from-[#1b1b1b] to-[#242424] text-white rounded-xl overflow-hidden shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300"
+                className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-xl overflow-hidden shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300"
               >
                 <div className="relative w-full h-[100px] group overflow-hidden"> {/* Reduced height */}
                   <Image

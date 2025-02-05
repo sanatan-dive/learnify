@@ -33,12 +33,12 @@ export const SidebarComponent = ({ isLoading, children }: SidebarComponentProps)
       {!isLoading && (
         <>
           <Sidebar open={open} setOpen={setOpen}>
-            <SidebarBody className="justify-between bg-gradient-to-t from-[#1f1f1f] to-[#131313] gap-10 dark:bg-black">
+            <SidebarBody className="justify-between bg-gradient-to-t from-[#1a2147] to-[#070d2a] gap-10 ">
               <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
                 {open ? <Logo /> : <LogoIcon />}
                 <div className="mt-8 flex z-50 flex-col gap-2">
                   {isSignedIn && links.map((link, idx) => (
-                    <SidebarLink key={idx} link={link} className="hover:bg-neutral-800 hover:text-neutral-200 transition-colors duration-200 ease-in-out" />
+                    <SidebarLink key={idx} link={link} className="hover:bg-slate-900 hover:rounded-xl hover:text-neutral-200 transition-colors duration-200 ease-in-out" />
                   ))}
                 </div>
                 {isSignedIn ? (
