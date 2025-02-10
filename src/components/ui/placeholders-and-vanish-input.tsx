@@ -247,7 +247,7 @@ export function PlaceholdersAndVanishInput({
       </button>
 
       <div className="absolute inset-0 flex items-center rounded-full pointer-events-none">
-        <AnimatePresence mode="wait">
+        <AnimatePresence >
           {!value && (
             <motion.p
               initial={{

@@ -102,7 +102,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
         
       
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence >
         {!localIsLoading && (
           <motion.div
             key="search"
