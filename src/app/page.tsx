@@ -112,7 +112,7 @@ export default function Home() {
       borderColor: "group-hover:border-red-500/50",
     },
     {
-      type: "Courser Courses",
+      type: "Coursera Courses",
       title: "Machine Learning Specialization",
       icon: BookOpen,
       color: "text-blue-400",
@@ -218,7 +218,7 @@ export default function Home() {
       </motion.div>
 
       {isLoading && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-gray-900 p-8 rounded-xl shadow-xl shadow-purple-500/10">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
           </div>

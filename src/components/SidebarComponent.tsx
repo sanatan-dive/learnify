@@ -29,7 +29,7 @@ export const SidebarComponent = ({ isLoading, children }: SidebarComponentProps)
   ];
 
   return (
-    <div className={cn("rounded-md relative flex flex-col md:flex-row z-10 mx-auto border border-neutral-700 dark:border-neutral-600 overflow-hidden", "h-screen text-white")}>
+    <div className={cn("rounded-md relative  flex flex-col md:flex-row z-10 mx-auto border border-neutral-700 dark:border-neutral-600 overflow-hidden", "h-screen text-white")}>
       {!isLoading && (
         <>
           <Sidebar open={open} setOpen={setOpen}>
@@ -49,8 +49,8 @@ export const SidebarComponent = ({ isLoading, children }: SidebarComponentProps)
                   />
                 ) : (
                   <SidebarLink
-                    link={{ label: "Sign In", href: "#", icon: <IconArrowRight className="text-neutral-200 h-5 w-5 flex-shrink-0" /> }}
-                    className="hover:bg-neutral-800 hover:text-neutral-200 transition-colors duration-200 ease-in-out"
+                    link={{ label: "Sign In", href: "#", icon: <IconArrowRight className="text-neutral-200 z-50 h-5 w-5 flex-shrink-0" /> }}
+                    className="hover:bg-slate-800 hover:rounded-xl hover:text-neutral-200 transition-colors duration-200 ease-in-out"
                     onClick={() => setShowSigninDialog(true)}
                   />
                 )}

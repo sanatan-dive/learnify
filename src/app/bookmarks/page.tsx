@@ -4,7 +4,7 @@ import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { SidebarComponent } from "@/components/SidebarComponent";
+
 
 // Add these interfaces at the top of your file
 interface Bookmark {
@@ -84,7 +84,7 @@ function Bookmarks() {
   if (loading) {
     return (
       
-        <div className="p-6 space-y-8">
+        <div className="p-6 overflow-y-auto space-y-8">
           {/* Header Skeleton */}
           <Skeleton className="h-10 w-48 mb-8" />
           
@@ -198,13 +198,13 @@ function Bookmarks() {
 
   return (
     
-      <div className="p-6 overflow-auto space-y-8">
-        <h1 className="text-3xl  font-bold  bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+      <div className="p-6 h-screen  overflow-y-auto space-y-8">
+        <h1 className="text-3xl font-bold  bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
           Your Bookmarks
         </h1>
 
         {/* Playlists Section */}
-        <section className="space-y-6">
+        <section className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-300">Playlists</h2>
           {playlists.length === 0 ? (
             <p className="text-gray-500">No playlists bookmarked.</p>
@@ -235,7 +235,7 @@ function Bookmarks() {
         </section>
 
         {/* Courses Section */}
-        <section className="space-y-6">
+        <section className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-300">Courses</h2>
           {courses.length === 0 ? (
             <p className="text-gray-500">No courses bookmarked.</p>
@@ -256,7 +256,7 @@ function Bookmarks() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <p className="text-sm text-gray-400">
                         {expandedDescriptions[bookmark.id]
                           ? bookmark.courseraCourse?.description || bookmark.udemyCourse?.description
@@ -295,7 +295,7 @@ function Bookmarks() {
         </section>
 
         {/* Blogs Section */}
-        <section className="space-y-6">
+        <section className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-300">Blogs</h2>
           {blogs.length === 0 ? (
             <p className="text-gray-500">No blogs bookmarked.</p>
@@ -306,7 +306,7 @@ function Bookmarks() {
                   key={bookmark.id}
                   className="relative bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-800/50 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
                 >
-                  <CardHeader className="pb-3">
+                  <CardHeader className="pb-1">
                     <CardTitle className="text-lg text-white">
                       {bookmark.blog.title}
                     </CardTitle>
