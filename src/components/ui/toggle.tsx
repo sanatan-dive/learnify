@@ -4,10 +4,13 @@ import { motion } from "framer-motion"
 import { GiTomato } from "react-icons/gi"
 import { IconClock } from "@tabler/icons-react"
 
-export default function ToggleSwitch({ onToggle }) {
+interface ToggleSwitchProps {
+  onToggle: (timerMode: boolean) => void
+}
+
+export default function ToggleSwitch({ onToggle: onToggle }: ToggleSwitchProps) {
   const [isTimer, setIsTimer] = useState(false)
 
-  // Call the callback whenever isTimer changes
   useEffect(() => {
     if (onToggle) {
       onToggle(isTimer)
@@ -17,10 +20,10 @@ export default function ToggleSwitch({ onToggle }) {
   return (
     <div className="z-50">
       <motion.div
-        className="flex items-center justify-center w-24 h-12 bg-white rounded-full shadow-md cursor-pointer"
+        className="flex items-center justify-center w-24 h-12 bg-gray-800 rounded-full shadow-md cursor-pointer"
         onClick={() => setIsTimer(!isTimer)}
         animate={{
-          backgroundColor: isTimer ? "#E2E8F0" : "#FECACA",
+          backgroundColor: isTimer ? "#1F2937" : "#4B5563",
         }}
         transition={{ duration: 0.3 }}
       >
@@ -28,14 +31,14 @@ export default function ToggleSwitch({ onToggle }) {
           className="flex items-center justify-center w-10 h-10 rounded-full shadow-sm"
           animate={{
             x: isTimer ? 24 : -24,
-            backgroundColor: isTimer ? "#3B82F6" : "#EF4444",
+            backgroundColor: isTimer ? "#2563EB" : "#DC2626",
           }}
           transition={{ type: "spring", stiffness: 700, damping: 30 }}
         >
           {isTimer ? (
-            <IconClock className="w-6 h-6 text-white" />
+            <IconClock className="w-6 h-6 text-gray-100" />
           ) : (
-            <GiTomato className="w-6 h-6 text-white" />
+            <GiTomato className="w-6 h-6 text-gray-100" />
           )}
         </motion.div>
       </motion.div>

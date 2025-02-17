@@ -36,23 +36,23 @@ export const SidebarComponent = ({ isLoading, children }: SidebarComponentProps)
         <>
           <Sidebar open={open} setOpen={setOpen}>
             <SidebarBody className="justify-between bg-gradient-to-t from-[#1a2147] to-[#070d2a] gap-10 ">
-              <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+              <div className="flex flex-col flex-1 z-50 overflow-y-auto overflow-x-hidden">
                 {open ? <Logo /> : <LogoIcon />}
                 <div className="mt-8 flex z-50 flex-col gap-2">
                   {isSignedIn && links.map((link, idx) => (
-                    <SidebarLink key={idx} link={link} className="hover:bg-slate-900 hover:rounded-xl hover:text-neutral-200 transition-colors duration-200 ease-in-out" />
+                    <SidebarLink key={idx} link={link} className="hover:bg-slate-800 hover:rounded-xl hover:text-neutral-200 transition-colors duration-200 ease-in-out" />
                   ))}
                 </div>
                 {isSignedIn ? (
                   <SidebarLink
                     link={{ label: "Logout", href: "#", icon: <IconArrowLeft className="text-neutral-200 h-5 w-5 flex-shrink-0" /> }}
-                    className="hover:bg-neutral-800 hover:text-neutral-200 transition-colors duration-200 ease-in-out"
+                    className="hover:bg-slate-800 hover:rounded-xl mt-2 hover:text-neutral-200 z-50 transition-colors duration-200 ease-in-out"
                     onClick={() => setShowLogoutDialog(true)}
                   />
                 ) : (
                   <SidebarLink
                     link={{ label: "Sign In", href: "#", icon: <IconArrowRight className="text-neutral-200 z-50 h-5 w-5 flex-shrink-0" /> }}
-                    className="hover:bg-slate-800 hover:rounded-xl hover:text-neutral-200 transition-colors duration-200 ease-in-out"
+                    className="hover:bg-slate-800 hover:rounded-xl z-50 hover:text-neutral-200 transition-colors duration-200 ease-in-out"
                     onClick={() => setShowSigninDialog(true)}
                   />
                 )}

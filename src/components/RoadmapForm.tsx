@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -20,17 +20,17 @@ export default function RoadmapForm() {
   const router = useRouter();
   const initialTopic = searchParams.get("query") || "";
 
-  const [topic, setTopic] = useState<string>(initialTopic);
-  const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [visiblePhases, setVisiblePhases] = useState<number>(0);
+  const [topic, setTopic] = useState(initialTopic);
+  const [roadmap, setRoadmap] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [visiblePhases, setVisiblePhases] = useState(0);
 
-  const fetchRoadmap = async (query: string) => {
+  const fetchRoadmap = async (query) => {
     if (!query) return;
     setLoading(true);
     setError(null);
-    setVisiblePhases(0); // Reset animation state
+    setVisiblePhases(0);
 
     try {
       const response = await fetch("/api/generateRoadmap", {
@@ -46,11 +46,10 @@ export default function RoadmapForm() {
       const data = await response.json();
       setRoadmap(data);
 
-      // Reveal phases one by one in sequence
-      for (let i = 0; i < data.steps.length; i++) {
+      for (let i = 0; i < data.steps.length + 1; i++) {
         setTimeout(() => {
           setVisiblePhases((prev) => prev + 1);
-        }, (i + 1) * 1000);
+        }, (i + 1) * 800);
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
@@ -65,7 +64,7 @@ export default function RoadmapForm() {
     }
   }, [initialTopic]);
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!topic) return;
     router.push(`?query=${encodeURIComponent(topic)}`);
@@ -88,101 +87,162 @@ export default function RoadmapForm() {
   };
 
   return (
-    <div className="flex flex-col items-center overflow-scroll z-50 p-6 bg-gradient-to-r from-[#181818] to-[#1f1f1f] rounded-lg shadow-lg">
-      <h1 className="text-2xl font-semibold text-center mb-4">Learning Roadmap Generator</h1>
+    <div
+    className="overflow-y-auto max-h-screen scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-
+    style={{
+      scrollbarWidth: 'thin', // For Firefox
+    }}
+  >
+   
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col items-center min-h-screen w-full overflow-y-auto  text-slate-100 p-6"
+    >
+      <motion.div 
+        className="w-full max-w-4xl"
+        initial={{ scale: 0.95 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <h1 style={{ zIndex: 10 }}className="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-violet-100 to-purple-400 bg-clip-text text-transparent">
+          Learning Roadmap Generator
+        </h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          value={topic}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setTopic(e.target.value)}
-          placeholder="Enter a topic (e.g., machine learning, web development)"
-          required
-          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none text-black focus:ring-2 focus:ring-blue-500"
-        />
-        <button
+        <form 
+        onSubmit={handleSubmit} 
+        className="relative space-y-4 mb-8"
+      >
+        <motion.div
+          whileHover={{ scale: 1.01 }}
+          className="relative"
+          style={{ zIndex: 1 }}
+        >
+          <input
+            type="text"
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+            placeholder="Enter a topic (e.g., machine learning, web development)"
+            required
+            className="w-full p-4 bg-slate-800 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-slate-100 placeholder-slate-400"
+          />
+        </motion.div>
+        
+        <motion.button
           type="submit"
           disabled={loading}
-          className="w-full py-2 bg-gradient-to-r from-blue-400 to-purple-500 text-white rounded-md shadow-md hover:opacity-80 transition disabled:opacity-50"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="relative w-full p-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+          style={{ zIndex: 2 }}
         >
           {loading ? "Generating..." : "Generate Roadmap"}
-        </button>
+        </motion.button>
       </form>
 
-      {error && (
-        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-red-600 text-center">{error}</p>
-        </div>
-      )}
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="p-4 bg-red-900/50 border border-red-700 rounded-lg mb-8"
+          >
+            <p className="text-red-200 text-center">{error}</p>
+          </motion.div>
+        )}
 
-      {roadmap && (
-        <div
-          id="roadmap"
-          className="mt-8 w-full bg-gradient-t from-[#444343] to-[#a19f9f] p-6 rounded-lg shadow-md"
-          style={{ height: "70vh", overflowY: "auto" }} // Fixed height and scrollable
-        >
-          <h2 className="text-2xl font-bold mb-6 text-center">{roadmap.title}</h2>
-          <div className="space-y-8">
-            <AnimatePresence>
-              {roadmap.steps.map((step, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: -30 }}
-                  animate={visiblePhases > index ? { opacity: 1, y: 0 } : {}}
-                  exit={{ opacity: 0, y: -30 }}
-                  transition={{ duration: 0.7, ease: "easeOut", delay: index * 0.2 }}
-                  className="relative"
-                >
-                  {/* Step Number and Title */}
+        {roadmap && (
+           <div
+           className="overflow-y-auto max-h-screen scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-
+           style={{
+             scrollbarWidth: 'thin', // For Firefox
+           }}
+         >
+          <motion.div
+            id="roadmap"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-slate-800/50 backdrop-blur-sm rounded-lg shadow-xl p-8"
+          >
+            <h2 className="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              {roadmap.title}
+            </h2>
+            
+            <div className="space-y-6">
+              <AnimatePresence>
+                {roadmap.steps.map((step, index) => (
                   <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    className="flex items-center mb-4 cursor-pointer"
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={visiblePhases > index ? { opacity: 1, x: 0 } : {}}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.5, delay: index * 0.2 }}
+                    className="relative"
                   >
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-                      {index + 1}
-                    </div>
-                    <h3 className="ml-4 text-xl font-semibold">{step.phase}</h3>
-                  </motion.div>
-
-                  {/* Step Content */}
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={visiblePhases > index ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.5, delay: index * 0.3 + 0.5 }}
-                    className="ml-12 p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <ul className="list-disc ml-4 space-y-2">
-                      {step.topics.map((topic, topicIndex) => (
-                        <li key={topicIndex} className="text-gray-700">{topic}</li>
-                      ))}
-                    </ul>
-                  </motion.div>
-
-                  {/* Animated Connector (Only if not the last step) */}
-                  {index < roadmap.steps.length  && visiblePhases > index && (
                     <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: 120 }} // Expands downward
-                      transition={{ duration: 0.8, ease: "easeOut", delay: index * 0.3 + 0.5 }}
-                      className="absolute left-4 top-12 w-0.5 bg-blue-500"
-                    />
-                  )}
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
+                      whileHover={{ scale: 1.01 }}
+                      className="flex items-center mb-4"
+                    >
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                        {index + 1}
+                      </div>
+                      <h3 className="ml-4 text-xl font-semibold text-slate-100">{step.phase}</h3>
+                    </motion.div>
 
-          {/* Download Button */}
-          <div className="mt-8 flex justify-center">
-            <button
-              onClick={handleDownload}
-              className="py-2 px-4 bg-gradient-to-r from-blue-400 to-purple-500 text-white rounded-md shadow-md hover:opacity-80 transition"
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={visiblePhases > index ? { opacity: 1 } : {}}
+                      transition={{ duration: 0.5, delay: index * 0.3 + 0.2 }}
+                      className="ml-14 p-6 bg-slate-700/50 rounded-lg shadow-lg hover:shadow-xl transition-all"
+                    >
+                      <ul className="space-y-3">
+                        {step.topics.map((topic, topicIndex) => (
+                          <motion.li
+                            key={topicIndex}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: (index * 0.2) + (topicIndex * 0.1) }}
+                            className="text-slate-300 flex items-center"
+                          >
+                            <div className="w-2 h-2 bg-purple-400 rounded-full mr-3" />
+                            {topic}
+                          </motion.li>
+                        ))}
+                      </ul>
+                    </motion.div>
+
+                    {index < roadmap.steps.length - 1 && visiblePhases > index && (
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: 80 }}
+                        transition={{ duration: 0.5, delay: index * 0.3 + 0.5 }}
+                        className="absolute left-5 top-16 w-0.5 bg-gradient-to-b from-blue-500 to-purple-500"
+                      />
+                    )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+
+            <motion.div 
+              className="mt-12 flex justify-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
             >
-              Download Roadmap
-            </button>
-          </div>
+              <motion.button
+                onClick={handleDownload}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+              >
+                Download Roadmap
+              </motion.button>
+            </motion.div>
+          </motion.div>
         </div>
-      )}
-    </div>
+        )}
+      </motion.div>
+    </motion.div>
+  </div>
   );
 }

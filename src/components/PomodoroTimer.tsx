@@ -39,7 +39,7 @@ export default function PomodoroTimer() {
     setTime(focusDuration * 60);
   };
 
-  const focusOptions = [15, 25, 45, 60, 90].map((value) => ({
+  const focusOptions = [15, 25, 45,50, 60, 90].map((value) => ({
     value: value.toString(),
     label: `${value} minutes`,
   }));
@@ -78,9 +78,9 @@ export default function PomodoroTimer() {
           <motion.div 
             className="text-7xl font-bold text-center mb-8 font-['JetBrains Mono']"
             key={time} 
-            initial={{ scale: 0.8 }}
+            initial={{ scale: 0.95 }}
             animate={{ scale: 1 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.5 }}
           >
             {formatTime(time)}
           </motion.div>
@@ -92,7 +92,7 @@ export default function PomodoroTimer() {
             >
              <Button
   onClick={handleStart}
-  className="relative bg-teal-500 border-black border-t-[2px] border-l-[2px] border-b-[6px] border-r-[6px] 
+  className="relative bg-slate-500 border-black border-t-[2px] border-l-[2px] border-b-[6px] border-r-[6px] 
              text-white px-8 py-2 hover:bg-teal-600 active:translate-y-[2px] active:translate-x-[2px] 
              transition-all before:absolute before:top-[4px] before:left-[0px] 
              before:right-[-4px] before:bottom-[-6px] 

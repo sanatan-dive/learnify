@@ -115,7 +115,7 @@ export default function StudyTimer() {
             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button
                 onClick={() => setIsRunning(!isRunning)}
-                className="relative bg-teal-500 border-black border-t-[2px] border-l-[2px] border-b-[6px] border-r-[6px] 
+                className="relative bg-slate-500 border-black border-t-[2px] border-l-[2px] border-b-[6px] border-r-[6px] 
                          text-white px-8 py-2 hover:bg-teal-600 active:translate-y-[2px] active:translate-x-[2px] 
                          transition-all before:absolute before:top-[4px] before:left-[0px] 
                          before:right-[-4px] before:bottom-[-6px] 
@@ -144,7 +144,7 @@ export default function StudyTimer() {
             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button
                 onClick={() => setLaps([...laps, timeElapsed])}
-                className="relative bg-teal-500 border-black border-t-[2px] border-l-[2px] border-b-[6px] border-r-[6px] 
+                className="relative bg-slate-500 border-black border-t-[2px] border-l-[2px] border-b-[6px] border-r-[6px] 
                          text-white px-8 py-2 hover:bg-teal-600 active:translate-y-[2px] active:translate-x-[2px] 
                          transition-all before:absolute before:top-[4px] before:left-[0px] 
                          before:right-[-4px] before:bottom-[-6px] 
