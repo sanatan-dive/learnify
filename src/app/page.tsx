@@ -138,7 +138,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="h-screen flex flex-col gap-8 justify-center items-center w-full overflow-hidden p-6">
+    <div className="h-screen flex flex-col gap-8 justify-center items-center w-full  p-6">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}

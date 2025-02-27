@@ -96,12 +96,8 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-10 w-full text-white relative">
+    <div className=" p-10 h-screen flex flex-col justify-center items-center w-full text-white relative">
       {/* Generate Roadmap Button */}
-      
-        
-      
-
       <AnimatePresence >
         {!localIsLoading && (
           <motion.div

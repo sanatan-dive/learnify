@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { GiTomato } from "react-icons/gi";
+
 
 export default function PomodoroTimer() {
   const [isRunning, setIsRunning] = useState(false);

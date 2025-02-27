@@ -87,12 +87,7 @@ export default function RoadmapForm() {
   };
 
   return (
-    <div
-    className="overflow-y-auto max-h-screen scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-
-    style={{
-      scrollbarWidth: 'thin', // For Firefox
-    }}
-  >
+  
    
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -243,6 +238,6 @@ export default function RoadmapForm() {
         )}
       </motion.div>
     </motion.div>
-  </div>
+ 
   );
 }

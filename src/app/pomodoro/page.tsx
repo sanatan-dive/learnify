@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 ``
 const PomodoroTime = () => {
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex w-full items-center justify-center">
      
       <PomodoroTimer />
       
@@ -35,8 +35,8 @@ const Pomodoro = () => {
       <div className='absolute top-4 right-4'>
         <ToggleSwitch onToggle={handleToggle} />
       </div>
-      <div className="mt-20">
-        {isTimer ? <TimerComponent /> : <PomodoroTimer />}
+      <div className="">
+        {isTimer ? <TimerComponent /> : <PomodoroTime />}
       </div>
     </div>
   );
