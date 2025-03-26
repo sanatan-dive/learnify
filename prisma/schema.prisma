@@ -8,85 +8,90 @@ datasource db {
 }
 
 model User {
-  id        String     @id @default(cuid())
-  email     String     @unique
-  firstName String?
-  lastName  String?
-  imageUrl  String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  bookmarks Bookmark[]
+  id          String       @id @default(cuid())
+  email       String       @unique
+  firstName   String?
+  lastName    String?
+  imageUrl    String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  bookmarks   Bookmark[]
+  quizRecords QuizRecord[] // Add relation to QuizRecord
 }
 
 model Blog {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   query       String
   title       String
-  link        String   @unique
+  link        String     @unique
   author      String?
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   bookmarks   Bookmark[] @relation("BlogBookmarks")
 }
 
 model Courseracourse {
-  id               String   @id @default(cuid())
+  id               String     @id @default(cuid())
   query            String
   name             String
-  registrationLink String   @unique
+  registrationLink String     @unique
   description      String
   thumbnail        String
   workload         String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
   bookmarks        Bookmark[] @relation("CourseraCourseBookmarks")
 }
 
 model Udemycourse {
-  id               String   @id @default(cuid())
+  id               String     @id @default(cuid())
   query            String
   name             String
-  registrationLink String   @unique
+  registrationLink String     @unique
   description      String
   rating           Float
   thumbnail        String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
   bookmarks        Bookmark[] @relation("UdemyCourseBookmarks")
 }
 
 model Playlist {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   query     String
   title     String
-  link      String   @unique
+  link      String     @unique
   thumbnail String
   channel   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   bookmarks Bookmark[] @relation("PlaylistBookmarks")
 }
 
 model Bookmark {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  // Fields to store unique links only
-  blogLink        String? @unique
-  courseraLink    String? @unique
-  udemyLink       String? @unique
-  playlistLink    String? @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations with proper references
-  blog           Blog?           @relation("BlogBookmarks", fields: [blogLink], references: [link], map: "bookmark_blog_fkey")
+  id            String         @id @default(cuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  blogLink      String?        @unique
+  courseraLink  String?        @unique
+  udemyLink     String?        @unique
+  playlistLink  String?        @unique
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  blog          Blog?          @relation("BlogBookmarks", fields: [blogLink], references: [link], map: "bookmark_blog_fkey")
   courseraCourse Courseracourse? @relation("CourseraCourseBookmarks", fields: [courseraLink], references: [registrationLink], map: "bookmark_coursera_fkey")
-  udemyCourse    Udemycourse?    @relation("UdemyCourseBookmarks", fields: [udemyLink], references: [registrationLink], map: "bookmark_udemy_fkey")
-  playlist       Playlist?       @relation("PlaylistBookmarks", fields: [playlistLink], references: [link], map: "bookmark_playlist_fkey")
+  udemyCourse   Udemycourse?   @relation("UdemyCourseBookmarks", fields: [udemyLink], references: [registrationLink], map: "bookmark_udemy_fkey")
+  playlist      Playlist?      @relation("PlaylistBookmarks", fields: [playlistLink], references: [link], map: "bookmark_playlist_fkey")
 }
 
-
+model QuizRecord {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  topic     String
+  level     String
+  score     Json     // Store score as { correct: number, total: number }
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

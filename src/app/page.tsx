@@ -85,7 +85,7 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const placeholders = ["Enter your Topic", "Generate a Roadmap"];
+  const placeholders = ["Enter your Topic", "Learn Anything", "Master Anything"];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value);
 

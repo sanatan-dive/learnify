@@ -65,7 +65,6 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       );
     }
 
-    // Check if blogs with the given query already exist in the database
     const existingBlogs = await prisma.blog.findMany({
       where: { query },
     });
@@ -84,14 +83,12 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
     }
 
     const puppeteer = setupPuppeteer();
-    // @ts-expect-error: Ignoring type error due to dynamic import issue
     browser = await puppeteer.launch(BROWSER_CONFIG);
     const page = await browser.newPage();
 
     await setupPage(page);
 
     const url = `https://medium.com/search?q=${encodeURIComponent(query)}+roadmap`;
-
     const response = await page.goto(url, {
       waitUntil: "networkidle2",
       timeout: 30000,
@@ -101,31 +98,72 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       throw new Error(`Failed to load page: ${response?.status()}`);
     }
 
-    await page.waitForSelector(".bh.l");
+    await page.waitForSelector(
+      '.bh.mv.mw.mx.my, article, .js-postListItem',
+      { timeout: 45000 }
+    );
 
     const blogs = await page.evaluate(() => {
-      const blogElements = document.querySelectorAll(".bh.l");
+      const blogElements = document.querySelectorAll(
+        '.bh.mv.mw.mx.my, article, .js-postListItem'
+      );
+      
+      if (blogElements.length === 0) {
+        return [];
+      }
+
       const blogData: BlogData[] = [];
 
       for (let i = 0; i < Math.min(10, blogElements.length); i++) {
         const blog = blogElements[i];
-        const title = blog.querySelector('h2')?.innerText || null;
-        const link = (blog.querySelector('a.af.ag.ah.ai.aj.ak.al.am.an.ao.ap.aq.ar.as.at[href^="/@"]') as HTMLAnchorElement)?.href || null;
-        const author = (blog.querySelector('a[rel="noopener follow"] > p') as HTMLTextAreaElement)?.innerText || null;
-        const description = blog.querySelector('h3')?.innerText || null;
 
-        if (title && link && author && description) {
-          blogData.push({ title, link, author, description });
+        // Title selection
+        const titleElement = blog.querySelector('h2.bf.ju, h2, h1');
+        const title = titleElement?.textContent?.trim() || null;
+
+        // Link selection
+        const linkElement = blog.querySelector(
+          'a[href*="?source=search_post"], a[href*="/p/"], a[href*="@"]'
+        ) as HTMLAnchorElement;
+        const link = linkElement?.href || null;
+
+        // Updated author selection
+        const author1Element = blog.querySelector(
+          'p.bf.b.jc.z.cr.cs.ct.cu.cv.cw.cx.cy.bk, ' + // Matches your new author HTML
+          'a[href*="/@"][rel="noopener follow"] > p.bf.b.jc.z, ' +
+          '.author, a[href*="/@"]'
+        );
+        const author1 = author1Element?.textContent?.trim() || null;
+
+        // Updated description selection
+        const author2Element = blog.querySelector(
+          '.op h3.bf.b.ic.z.cr.jv.ct.cu.jw.cw.cy.cm, ' + // Matches your description HTML
+          'h3.bf.b.ic.z, h3, p'
+        );
+        const author2 = author2Element?.textContent?.trim() || null;
+        const author = author1 || author2 || null;
+
+        if (title && link) {
+          blogData.push({ 
+            title, 
+            link, 
+            author: author || null,
+            description: description || null 
+          });
         }
       }
 
       return blogData;
     });
 
-    // Save blogs to the database
+    if (blogs.length === 0) {
+      throw new Error('No blog posts found with the provided selectors');
+    }
+
+    console.log("Found blogs:", blogs);
+
     const savedBlogs = await Promise.all(
       blogs.map(async (blog) => {
-        // Check if the blog already exists in the database
         const existingBlog = await prisma.blog.findUnique({
           where: { link: blog.link || "" },
         });
@@ -136,7 +174,7 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
 
         return prisma.blog.create({
           data: {
-            query, // Store the query that was used to find the blog
+            query,
             title: blog.title,
             link: blog.link || "",
             author: blog.author,
@@ -145,6 +183,8 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
         });
       })
     );
+
+    console.log("Saved blogs:", savedBlogs);
 
     return NextResponse.json({
       blogs: savedBlogs.map((savedBlog) => ({
@@ -162,19 +202,17 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
     return NextResponse.json(
       {
         error: "Failed to fetch blogs",
-        details:
-          process.env.NODE_ENV === "development"
-            ? (error as Error).message
-            : undefined,
+        details: process.env.NODE_ENV === "development"
+          ? (error as Error).message
+          : undefined,
       },
-      { status: 500 },
+      { status: 500 }
     );
   } finally {
     if (browser) {
       await browser.close().catch((error: Error) =>
-        console.error("Error closing browser:", error),
+        console.error("Error closing browser:", error)
       );
     }
   }
 }
-
