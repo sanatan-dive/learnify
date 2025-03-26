@@ -26,18 +26,18 @@ const SkeletonLoader = () => {
         </Card>
 
         {/* Coursera and Udemy Section */}
-        <div className="flex flex-col gap-8 w-full">
+        <div className="flex flex-col gap-8 h-full w-full">
           {/* Coursera */}
           <Card className="bg-gradient-to-b from-gray-800 to-gray-900 border-gray-700 w-full shadow-2xl">
             <CardHeader>
-              <Skeleton className="h-6 w-32 bg-gray-700" />
+              <Skeleton className="h-10 w-32 bg-gray-700" />
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-8">
               {[1, 2].map((i) => (
                 <div key={i} className="space-y-2">
-                  <Skeleton className="h-4 w-full bg-gray-700" />
-                  <Skeleton className="h-4 w-2/3 bg-gray-700" />
-                  <Skeleton className="h-4 w-1/3 bg-gray-700" />
+                  <Skeleton className="h-8 w-full bg-gray-700" />
+                  <Skeleton className="h-8 w-2/3 bg-gray-700" />
+                  <Skeleton className="h-8 w-1/3 bg-gray-700" />
                 </div>
               ))}
             </CardContent>
@@ -46,14 +46,14 @@ const SkeletonLoader = () => {
           {/* Udemy */}
           <Card className="bg-gradient-to-b from-gray-800 to-gray-900 border-gray-700 w-full shadow-2xl">
             <CardHeader>
-              <Skeleton className="h-6 w-32 bg-gray-700" />
+              <Skeleton className="h-10 w-32 bg-gray-700" />
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-8">
               {[1, 2].map((i) => (
                 <div key={i} className="space-y-2">
-                  <Skeleton className="h-4 w-full bg-gray-700" />
-                  <Skeleton className="h-4 w-2/3 bg-gray-700" />
-                  <Skeleton className="h-4 w-1/3 bg-gray-700" />
+                  <Skeleton className="h-8 w-full bg-gray-700" />
+                  <Skeleton className="h-8 w-2/3 bg-gray-700" />
+                  <Skeleton className="h-8 w-1/3 bg-gray-700" />
                 </div>
               ))}
             </CardContent>

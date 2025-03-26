@@ -210,26 +210,29 @@ function Bookmarks() {
             <p className="text-gray-500">No playlists bookmarked.</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {playlists.map((bookmark) => (
-                <Card
-                  key={bookmark.id}
-                  className="relative bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-800/50 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
-                >
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg text-white">
-                      {bookmark.playlist.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p className="text-sm text-gray-400">
-                      {bookmark.playlist.channel}
-                    </p>
-                    <LinkButton href={bookmark.playlist.link}>
-                      Watch Playlist
-                    </LinkButton>
-                  </CardContent>
-                </Card>
-              ))}
+            {playlists.map((bookmark) => (
+  bookmark.playlist && ( // Add this check
+    <Card
+      key={bookmark.id}
+      className="relative bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-800/50 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+    >
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg text-white">
+          {bookmark.playlist.title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p className="text-sm text-gray-400">
+          {bookmark.playlist.channel}
+        </p>
+        <LinkButton href={bookmark.playlist.link}>
+          Watch Playlist
+        </LinkButton>
+      </CardContent>
+    </Card>
+  )
+))}
+
             </div>
           )}
         </section>
@@ -267,8 +270,9 @@ function Bookmarks() {
                               15
                             )}
                       </p>
-                      {(bookmark.courseraCourse?.description?.split(" ").length > 15 ||
-                        bookmark.udemyCourse?.description?.split(" ").length > 15) && (
+                      {((bookmark.courseraCourse?.description && bookmark.courseraCourse.description.split(" ").length > 15) ||
+  (bookmark.udemyCourse?.description && bookmark.udemyCourse.description.split(" ").length > 15))
+ && (
                         <button
                           onClick={() => toggleDescription(bookmark.id)}
                           className="text-blue-400 hover:text-blue-300 text-xs font-medium cursor-pointer"

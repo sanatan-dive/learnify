@@ -8,12 +8,10 @@ export function PlaceholdersAndVanishInput({
   placeholders,
   onChange,
   onSubmit,
-  disabled
 }: {
   placeholders: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  disabled?: boolean
 }) {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
 
@@ -178,11 +176,10 @@ export function PlaceholdersAndVanishInput({
   };
   return (
     <form
-    className={cn(
-      "w-[600px] relative mx-auto bg-gradient-to-r from-[#1f385d] to-[#051d38] border-[#aab6cb] border-2 text-bold text-white h-12 rounded-full overflow-hidden shadow-md transition duration-200",
-      value && "bg-[#3e4a5d]"
-    )}
-    
+      className={cn(
+        "w-[600px] relative mx-auto bg-gradient-to-r from-[#1f385d] to-[#051d38] border-[#aab6cb] border-2 text-bold text-white h-12 rounded-full overflow-hidden shadow-md transition duration-400",
+        value && "bg-[#3e4a5d]"
+      )}
       onSubmit={handleSubmit}
     >
       <canvas
@@ -224,7 +221,7 @@ export function PlaceholdersAndVanishInput({
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-[#a9a9a9] h-4 w-4"
+          className="text-gray-300 h-4 w-4"
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <motion.path
@@ -247,7 +244,7 @@ export function PlaceholdersAndVanishInput({
       </button>
 
       <div className="absolute inset-0 flex items-center rounded-full pointer-events-none">
-        <AnimatePresence >
+        <AnimatePresence mode="wait">
           {!value && (
             <motion.p
               initial={{
@@ -277,3 +274,6 @@ export function PlaceholdersAndVanishInput({
     </form>
   );
 }
+
+
+

@@ -2,7 +2,6 @@ import React, { useState as useStateHook, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
-import WorldResourceLoader from "@/components/Loading";
 import YouTubePlaylist from "@/components/YoutubePlaylist";
 import MediumBlogs from "@/components/MediumBlogs";
 import CourseraCourses from "@/components/CourseraCourses";
