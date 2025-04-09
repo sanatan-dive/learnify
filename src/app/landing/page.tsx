@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { SidebarComponent } from "@/components/SidebarComponent";
 import { LandingPageContent } from "@/components/LandingPage";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";

@@ -31,7 +31,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
       setLocalIsLoading(true);
       setIsLoading(true);
       try {
-        const response = await fetch(`/api/fetchall?query=${query}`);
+        const response = await fetch(`/api/Resources/fetchall?query=${query}`);
         
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -111,7 +111,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
               placeholders={placeholders}
               onChange={handleChange}
               onSubmit={onSubmit}
-              disabled={localIsLoading}
+              // disabled={localIsLoading}
             />
           </motion.div>
         )}

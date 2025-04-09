@@ -1,15 +1,17 @@
 "use client";
 import { useState } from "react";
-import { BackgroundLines } from "@/components/ui/background-lines";
+
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
-import { TextRevealCard } from "@/components/ui/text-reveal-card";
+
 import { useRouter } from "next/navigation";
 import { Marquee } from "@/components/ui/marquee";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { SidebarComponent } from "@/components/SidebarComponent";
+
 import { Youtube, BookOpen, PlayCircle, FileText } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import UpgradeButton from "@/components/Premium";
+import { useUser } from "@clerk/nextjs";
 
 const reviews = [
   {
@@ -82,6 +84,8 @@ const ReviewCard = ({
 
 export default function Home() {
   const router = useRouter();
+  const user = useUser()
+  const userId = user.user?.id || ""
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -166,7 +170,7 @@ export default function Home() {
           placeholders={placeholders}
           onChange={handleChange}
           onSubmit={onSubmit}
-          disabled={isLoading}
+          // disabled={isLoading}
         />
       </motion.div>
 
@@ -194,6 +198,7 @@ export default function Home() {
           </Card>
         ))}
       </motion.div>
+      <UpgradeButton userId={userId} />
 
       <motion.div
         initial={{ opacity: 0, y: 50 }}

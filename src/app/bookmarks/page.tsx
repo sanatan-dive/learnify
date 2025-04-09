@@ -47,7 +47,7 @@ function Bookmarks() {
   useEffect(() => {
     async function fetchBookmarks() {
       try {
-        const response = await axios.get("/api/bookmark");
+        const response = await axios.get("/api/Features/bookmark");
         // console.log(response.data.bookmarks);
         setBookmarks(response.data.bookmarks);
       } catch (err) {

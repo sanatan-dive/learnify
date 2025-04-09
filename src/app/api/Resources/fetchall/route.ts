@@ -15,10 +15,10 @@ try {
 const baseUrl = new URL(request.url).origin;
 // Set up the API endpoints
 const apiEndpoints = [
- { name: "medium", url: `${baseUrl}/api/medium?query=${query}` },
- { name: "coursera", url: `${baseUrl}/api/coursera?query=${query}` },
- { name: "udemy", url: `${baseUrl}/api/udemy?query=${query}` },
- { name: "youtube", url: `${baseUrl}/api/youtube?query=${query}` },
+ { name: "medium", url: `${baseUrl}/api/Resources/medium?query=${query}` },
+ { name: "coursera", url: `${baseUrl}/api/Resources/coursera?query=${query}` },
+ { name: "udemy", url: `${baseUrl}/api/Resources/udemy?query=${query}` },
+ { name: "youtube", url: `${baseUrl}/api/Resources/youtube?query=${query}` },
  ];
 // Make parallel requests to the APIs
 const responses = await Promise.all(

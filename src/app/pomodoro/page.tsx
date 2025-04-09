@@ -26,7 +26,7 @@ const TimerComponent = () => {
 const Pomodoro = () => {
   const [isTimer, setIsTimer] = useState(false);
 
-  const handleToggle = (timerMode) => {
+  const handleToggle = (timerMode : boolean) => {
     setIsTimer(timerMode);
   };
 

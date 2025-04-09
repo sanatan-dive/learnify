@@ -7,16 +7,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Plan {
+  FREE
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  NONE        // No subscription
+  CREATED     // Subscription created but not yet active
+  ACTIVE      // Subscription is active
+  AUTHENTICATED // Payment authenticated
+  PENDING     // Payment pending
+  HALTED      // Temporarily paused
+  CANCELLED   // Cancelled by user
+  EXPIRED     // Reached end of billing cycles
+  FAILED      // Payment failed
+}
+
 model User {
-  id          String       @id @default(cuid())
-  email       String       @unique
-  firstName   String?
-  lastName    String?
-  imageUrl    String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  bookmarks   Bookmark[]
-  quizRecords QuizRecord[] // Add relation to QuizRecord
+  id                    String             @id @default(cuid())
+  email                 String             @unique
+  firstName             String?
+  lastName              String?
+  imageUrl              String?
+  name                  String?            // Full name (helpful for Razorpay)
+  
+  // Subscription and plan information
+  plan                  Plan               @default(FREE)
+  subscriptionStatus    SubscriptionStatus @default(NONE)
+  subscriptionStartDate DateTime?          // When the current subscription began
+  subscriptionEndDate   DateTime?          // When the current subscription will end
+  
+  // Razorpay specific fields
+  razorpayCustomerId    String?            // Razorpay customer ID
+  razorpaySubscriptionId String?           // Razorpay subscription ID
+  
+  // Timestamps
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  
+  // Relationships
+  bookmarks             Bookmark[]
+  quizRecords           QuizRecord[]
 }
 
 model Blog {
@@ -32,29 +64,29 @@ model Blog {
 }
 
 model Courseracourse {
-  id               String     @id @default(cuid())
-  query            String
-  name             String
+  id              String     @id @default(cuid())
+  query           String
+  name            String
   registrationLink String     @unique
-  description      String
-  thumbnail        String
-  workload         String
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-  bookmarks        Bookmark[] @relation("CourseraCourseBookmarks")
+  description     String
+  thumbnail       String
+  workload        String
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  bookmarks       Bookmark[] @relation("CourseraCourseBookmarks")
 }
 
 model Udemycourse {
-  id               String     @id @default(cuid())
-  query            String
-  name             String
+  id              String     @id @default(cuid())
+  query           String
+  name            String
   registrationLink String     @unique
-  description      String
-  rating           Float
-  thumbnail        String
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-  bookmarks        Bookmark[] @relation("UdemyCourseBookmarks")
+  description     String
+  rating          Float
+  thumbnail       String
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  bookmarks       Bookmark[] @relation("UdemyCourseBookmarks")
 }
 
 model Playlist {
@@ -70,19 +102,19 @@ model Playlist {
 }
 
 model Bookmark {
-  id            String         @id @default(cuid())
-  userId        String
-  user          User           @relation(fields: [userId], references: [id])
-  blogLink      String?        @unique
-  courseraLink  String?        @unique
-  udemyLink     String?        @unique
-  playlistLink  String?        @unique
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  blog          Blog?          @relation("BlogBookmarks", fields: [blogLink], references: [link], map: "bookmark_blog_fkey")
+  id           String         @id @default(cuid())
+  userId       String
+  user         User           @relation(fields: [userId], references: [id])
+  blogLink     String?        @unique
+  courseraLink String?        @unique
+  udemyLink    String?        @unique
+  playlistLink String?        @unique
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  blog         Blog?          @relation("BlogBookmarks", fields: [blogLink], references: [link], map: "bookmark_blog_fkey")
   courseraCourse Courseracourse? @relation("CourseraCourseBookmarks", fields: [courseraLink], references: [registrationLink], map: "bookmark_coursera_fkey")
-  udemyCourse   Udemycourse?   @relation("UdemyCourseBookmarks", fields: [udemyLink], references: [registrationLink], map: "bookmark_udemy_fkey")
-  playlist      Playlist?      @relation("PlaylistBookmarks", fields: [playlistLink], references: [link], map: "bookmark_playlist_fkey")
+  udemyCourse  Udemycourse?   @relation("UdemyCourseBookmarks", fields: [udemyLink], references: [registrationLink], map: "bookmark_udemy_fkey")
+  playlist     Playlist?      @relation("PlaylistBookmarks", fields: [playlistLink], references: [link], map: "bookmark_playlist_fkey")
 }
 
 model QuizRecord {

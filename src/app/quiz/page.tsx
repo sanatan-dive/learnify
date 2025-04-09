@@ -64,7 +64,7 @@ export default function QuizPage() {
       const fetchQuizRecords = async () => {
         setRecordsLoading(true);
         try {
-          const response = await fetch('/api/quiz-records', {
+          const response = await fetch('/api/Features/Quiz/quiz-records', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
           });
@@ -99,7 +99,7 @@ export default function QuizPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/generate-quiz', {
+      const response = await fetch('/api/Features/Quiz/generate-quiz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(quizConfig),
@@ -158,7 +158,7 @@ export default function QuizPage() {
 
     // Save the quiz record
     try {
-      await fetch('/api/quiz-records', {
+      await fetch('/api/Features/Quiz/quiz-records', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -168,7 +168,7 @@ export default function QuizPage() {
         }),
       });
       // Refresh records after saving
-      const response = await fetch('/api/quiz-records', {
+      const response = await fetch('/api/Features/Quiz/quiz-records', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -226,7 +226,7 @@ export default function QuizPage() {
         <div className="flex justify-center mt-8">
           <Button
             onClick={() => setStep(0)}
-            className="px-8 py-2 bg-blue-600 hover:bg-blue-700"
+            className="px-8 py-2 bg-gradient-to-r from-blue-800 via-blue-500 to-blue-800 hover:bg-gradient-to-r hover:from-blue-900 hover:via-blue-600 hover:to-blue-900 text-white rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/25"
           >
             Take a New Quiz
           </Button>
@@ -419,7 +419,7 @@ export default function QuizPage() {
   return (
     <div className="min-h-screen  text-white">
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-5xl font-bold text-center mb-4">Personalized Quiz Generator</h1>
+        <h1 className="text-5xl font-bold text-center mb-4"> Quiz Generator</h1>
         <p className="text-xl text-center mb-8 text-gray-400">
           Create custom quizzes tailored to your learning needs
         </p>
