@@ -6,7 +6,7 @@ import { ArrowRight, Bookmark } from "lucide-react";
 import { useAuth, SignInButton, useUser } from "@clerk/nextjs";
 import LoginDialog from "./LoginDialog";
 import axios from "axios";
-
+import toast from 'react-hot-toast';
 interface MediumBlogsProps {
   blogs: {
     title: string;
@@ -55,8 +55,9 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
     }
 
     const blog = blogs[index];
+     const loadingToast = toast.loading('Bookmarking Blog...');
     try {
-      const responses = await axios.post('/api/bookmark', {
+      const responses = await axios.post('/api/Features/bookmark', {
         userId: user?.id,
         bookmarkableId: blog.link, // Use the link as a unique identifier
         bookmarkableType: 'Blog',
@@ -69,7 +70,16 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
           },
         },
       })
+      toast.dismiss(loadingToast);
+            toast.success('Bookmarked successfully!', {
+              duration: 3000,
+              icon: '🔖',
+            });
     } catch (error) {
+      toast.dismiss(loadingToast);
+            toast.error('Failed to bookmark playlist. Please try again.', {
+              duration: 4000,
+            });
       
     }
     setBookmarkedBlogs((prev) => ({

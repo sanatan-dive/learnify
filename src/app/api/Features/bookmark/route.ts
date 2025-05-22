@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!userExists) {
+      
       return NextResponse.json({ error: "User does not exist" }, { status: 404 });
     }
 
@@ -100,6 +101,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const { userId } = getAuth(req);
+    console.log("userId",userId);
     if (!userId) {
       return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
     }

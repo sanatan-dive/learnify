@@ -109,7 +109,7 @@ export default function Home() {
   const sampleResources = [
     {
       type: "YouTube Playlists",
-      title: "Complete Web Development Bootcamp",
+      title: "Ex. (Complete Web Development Bootcamp)",
       icon: Youtube,
       color: "text-red-400",
       bgColor: "bg-red-500/10",
@@ -117,7 +117,7 @@ export default function Home() {
     },
     {
       type: "Coursera Courses",
-      title: "Machine Learning Specialization",
+      title: "Ex. (Machine Learning Specialization)",
       icon: BookOpen,
       color: "text-blue-400",
       bgColor: "bg-blue-500/10",
@@ -125,7 +125,7 @@ export default function Home() {
     },
     {
       type: "Udemy Courses",
-      title: "Python for Data Science",
+      title: "Ex. (Python for Data Science)",
       icon: PlayCircle,
       color: "text-purple-400",
       bgColor: "bg-purple-500/10",
@@ -133,7 +133,7 @@ export default function Home() {
     },
     {
       type: "Medium blogs",
-      title: "Getting Started with React",
+      title: "Ex. (Getting Started with React)",
       icon: FileText,
       color: "text-green-400",
       bgColor: "bg-green-500/10",
@@ -198,7 +198,7 @@ export default function Home() {
           </Card>
         ))}
       </motion.div>
-      <UpgradeButton userId={userId} />
+      
 
       <motion.div
         initial={{ opacity: 0, y: 50 }}
@@ -221,6 +221,8 @@ export default function Home() {
           <div className="pointer-events-none absolute inset-y-0 right-0 w-[10%] bg-gradient-to-l from-gray-950"></div>
         </div>
       </motion.div>
+          
+      <div className="flex justify-center  z-50"><UpgradeButton userId={userId} /></div>
 
       {isLoading && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">

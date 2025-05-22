@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button"; // Assuming you have a Button component
 import LoginDialog from "./LoginDialog";
 import axios from "axios";
-
+import toast from "react-hot-toast";
 interface CourseraCoursesProps {
   courses: {
     name: string;
@@ -70,10 +70,11 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
     }
 
     const udemycourse = courses[index];
+     const loadingToast = toast.loading('Bookmarking Course...');
    
 
     try {
-      const response = await axios.post('/api/bookmark', {
+      const response = await axios.post('/api/Features/bookmark', {
         userId: user?.id,
         bookmarkableId: udemycourse.registrationLink, 
         bookmarkableType: 'Udemycourse',
@@ -87,9 +88,17 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
         }
         },
       });
-
+      toast.dismiss(loadingToast);
+            toast.success('Bookmarked successfully!', {
+              duration: 3000,
+              icon: '🔖',
+            });
       
     } catch (error) {
+      toast.dismiss(loadingToast);
+      toast.error('Failed to bookmark playlist. Please try again.', {
+        duration: 4000,
+      });
       
     }
     setBookmarkedCourses((prev) => ({

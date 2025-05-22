@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, ReactNode } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
-import { IconArrowLeft, IconArrowRight, IconBookmark, IconClock, IconHome, IconQuestionMark, IconSearch } from "@tabler/icons-react";
+import { IconArrowLeft, IconArrowRight, IconBook, IconBookmark, IconClock, IconHome, IconQuestionMark, IconSearch } from "@tabler/icons-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useUser, SignOutButton, SignInButton } from "@clerk/nextjs";
@@ -28,8 +28,7 @@ export const SidebarComponent = ({ isLoading, children }: SidebarComponentProps)
     { label: "Home", href: "/", icon: <IconHome className="text-neutral-200 h-5 w-5 flex-shrink-0" /> },
     { label: "Roadmap", href: "/roadmap", icon: <IconSearch className="text-neutral-200 h-5 w-5 flex-shrink-0" /> },
     { label: "Bookmarks", href: "/bookmarks", icon: <IconBookmark className="text-neutral-200 h-5 w-5 flex-shrink-0" /> },
-    { label: "Pomodoro", href: "/pomodoro", icon:   <GiTomato className="text-neutral-200 h-5 w-5 flex-shrink-0" />},
-    { label: "Quiz", href: "/quiz", icon:   <IconQuestionMark className="text-neutral-200 h-5 w-5 flex-shrink-0" />},
+    { label: "Quiz", href: "/quiz", icon:   <IconBook className="text-neutral-200 h-5 w-5 flex-shrink-0" />},
     
   ];
 

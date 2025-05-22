@@ -4,6 +4,7 @@ import { Volume2, Play, Bookmark } from 'lucide-react';
 import { useAuth, useUser } from '@clerk/nextjs'; // Import Clerk hooks
 import Image from 'next/image';
 import axios from 'axios';
+import toast from 'react-hot-toast'; // Import react-hot-toast
 import LoginDialog from './LoginDialog';
 
 interface YouTubePlaylistProps {
@@ -62,20 +63,27 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
     const playlist = playlists[index];
     const userId = user?.id;
 
+    // Show loading toast
+    const loadingToast = toast.loading('Bookmarking playlist...');
+
     try {
       // Check if the playlist is already bookmarked
-      const checkResponse = await axios.get('/api/bookmark', {
+      const checkResponse = await axios.get('/api/Features/bookmark', {
         params: { userId, link: playlist.link },
       });
 
       if (checkResponse.data.isBookmarked) {
-        // Playlist is already bookmarked, so show a message and return
-        console.log('Playlist already bookmarked.');
+        // Playlist is already bookmarked, dismiss loading and show info
+        toast.dismiss(loadingToast);
+        toast('Playlist already bookmarked!', {
+          icon: '📌',
+          duration: 3000,
+        });
         return;
       }
 
       // If not bookmarked, proceed to bookmark it
-      await axios.post('/api/bookmark', {
+      await axios.post('/api/Features/bookmark', {
         userId: userId,
         bookmarkableId: playlist.link, // Use the link as a unique identifier
         bookmarkableType: 'Playlist',
@@ -95,9 +103,21 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
         [index]: true, // Set bookmark to true for the specific playlist
       }));
 
-      console.log('Bookmarked playlist');
+      // Dismiss loading toast and show success
+      toast.dismiss(loadingToast);
+      toast.success('Bookmarked successfully!', {
+        duration: 3000,
+        icon: '🔖',
+      });
+
     } catch (error) {
       console.error('Error checking or saving bookmark:', error);
+      
+      // Dismiss loading toast and show error
+      toast.dismiss(loadingToast);
+      toast.error('Failed to bookmark playlist. Please try again.', {
+        duration: 4000,
+      });
     }
   };
 
