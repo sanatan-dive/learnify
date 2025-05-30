@@ -30,16 +30,67 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
     const fetchData = async () => {
       setLocalIsLoading(true);
       setIsLoading(true);
+      
       try {
-        const response = await fetch(`/api/Resources/fetchall?query=${query}`);
+        const baseUrl = window.location.origin;
         
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
+        // Set up the API endpoints
+        const apiEndpoints = [
+          { name: "medium", url: `${baseUrl}/api/Resources/medium?query=${query}` },
+          { name: "coursera", url: `${baseUrl}/api/Resources/coursera?query=${query}` },
+          { name: "udemy", url: `${baseUrl}/api/Resources/udemy?query=${query}` },
+          { name: "youtube", url: `${baseUrl}/api/Resources/youtube?query=${query}` },
+        ];
 
-        const data: ApiResponse = await response.json();
+        console.log(`Starting parallel API calls for query: ${query}`);
+        const startTime = Date.now();
+
+        // Make parallel requests to all APIs simultaneously
+        const responses = await Promise.all(
+          apiEndpoints.map(async (endpoint) => {
+            try {
+              console.log(`Fetching from ${endpoint.name}...`);
+              const response = await fetch(endpoint.url);
+              
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              
+              const data = await response.json();
+              console.log(`✅ ${endpoint.name} completed successfully`);
+              return { data, error: null };
+            } catch (error) {
+              console.error(`❌ ${endpoint.name} failed:`, error);
+              return { data: null, error: error.message };
+            }
+          })
+        );
+
+        const endTime = Date.now();
+        console.log(`All API calls completed in ${endTime - startTime}ms`);
+
+        // Parse the responses into a results object
+        const results = apiEndpoints.reduce((acc, endpoint, index) => {
+          acc[endpoint.name] = responses[index]?.data || [];
+          return acc;
+        }, {} as Record<string, any>);
+
+        // Log summary
+        const successCount = responses.filter(r => r.data !== null).length;
+        console.log(`Successfully fetched from ${successCount}/${apiEndpoints.length} APIs`);
+
+        // Create the response object matching your ApiResponse type
+        const apiResponse: ApiResponse = {
+          query,
+          results,
+          metadata: {
+            totalApis: apiEndpoints.length,
+            successfulApis: successCount,
+            executionTimeMs: endTime - startTime,
+          }
+        };
         
-        setResponses(data);
+        setResponses(apiResponse);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -62,12 +113,10 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
     }
   };
 
-  const onRoadmap = ()=>{
-
+  const onRoadmap = () => {
     if (searchQuery.trim()) {
       router.push(`/roadmap?query=${encodeURIComponent(searchQuery)}`);
     }
-
   }
 
   const containerVariants = {
@@ -97,7 +146,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
   return (
     <div className=" p-10 h-screen flex flex-col justify-center items-center w-full text-white relative">
       {/* Generate Roadmap Button */}
-      <AnimatePresence >
+      <AnimatePresence>
         {!localIsLoading && (
           <motion.div
             key="search"
@@ -135,13 +184,12 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
             animate="visible"
             className="w-full max-w-8xl"
           >
-              <RainbowButton
-        onClick={onRoadmap}
-        className="absolute top-4 right-4 px-6 py-2 bg-gradient-to-r from-[#467cbf] via-[#0016d6] to-[#467cbf]  text-white rounded-full shadow-lg hover:opacity-80 transition hover:scale-105 "
-      >
-        Generate a Roadmap
-      
-      </RainbowButton>
+            <RainbowButton
+              onClick={onRoadmap}
+              className="absolute top-4 right-4 px-6 py-2 bg-gradient-to-r from-[#467cbf] via-[#0016d6] to-[#467cbf]  text-white rounded-full shadow-lg hover:opacity-80 transition hover:scale-105 "
+            >
+              Generate a Roadmap
+            </RainbowButton>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
               {responses && (
                 <>

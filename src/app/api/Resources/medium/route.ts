@@ -127,28 +127,27 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
         ) as HTMLAnchorElement;
         const link = linkElement?.href || null;
 
-        // Updated author selection
-        const author1Element = blog.querySelector(
+        // Author selection
+        const authorElement = blog.querySelector(
           'p.bf.b.jc.z.cr.cs.ct.cu.cv.cw.cx.cy.bk, ' + // Matches your new author HTML
           'a[href*="/@"][rel="noopener follow"] > p.bf.b.jc.z, ' +
           '.author, a[href*="/@"]'
         );
-        const author1 = author1Element?.textContent?.trim() || null;
+        const author = authorElement?.textContent?.trim() || null;
 
-        // Updated description selection
-        const author2Element = blog.querySelector(
+        // Description selection
+        const descriptionElement = blog.querySelector(
           '.op h3.bf.b.ic.z.cr.jv.ct.cu.jw.cw.cy.cm, ' + // Matches your description HTML
           'h3.bf.b.ic.z, h3, p'
         );
-        const author2 = author2Element?.textContent?.trim() || null;
-        const author = author1 || author2 || null;
+        const description = descriptionElement?.textContent?.trim() || null;
 
         if (title && link) {
           blogData.push({ 
             title, 
             link, 
-            author: author || null,
-            description: description || null 
+            author,
+            description 
           });
         }
       }
@@ -160,7 +159,7 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       throw new Error('No blog posts found with the provided selectors');
     }
 
-    console.log("Found blogs:", blogs);
+    // console.log("Found blogs:", blogs);
 
     const savedBlogs = await Promise.all(
       blogs.map(async (blog) => {

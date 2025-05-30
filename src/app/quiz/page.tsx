@@ -3,16 +3,9 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, CheckCircle, XCircle, Target, Award, Brain, TrendingUp, BookOpen, Plus, ChevronRight, Clock, Trophy, Star } from 'lucide-react';
-
+import { Loader2, CheckCircle, XCircle, Target, Award, Brain, TrendingUp, BookOpen, Plus, ChevronRight, Clock, Trophy, Star, CrossIcon, ArrowLeftToLine } from 'lucide-react'
 import { Prisma } from '@prisma/client';
-import { getAuth } from '@clerk/nextjs/server';
 import { useUser } from '@clerk/nextjs';
-
-const getCurrentUserId = () => {
-  // Replace this with your actual authentication logic
-  return "user-id-from-auth"; // Example user ID (or null if not authenticated)
-};
 
 interface QuizQuestion {
   question: string;
@@ -492,9 +485,10 @@ export default function QuizPage() {
   );
 
   const renderConfigStep = (stepNumber: QuizStep, title: string, description: string, children: React.ReactNode) => (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0  backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <Card className="w-full max-w-md bg-[#121835] border-[#1F3B8A]/50 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <CardHeader className="text-center">
+         
           <div className="w-16 h-16 bg-gradient-to-br from-[#1F3B8A] to-[#254EDB] rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl font-bold text-white">{stepNumber}</span>
           </div>
@@ -512,7 +506,7 @@ export default function QuizPage() {
     <div className="space-y-8">
       {/* Success Animation */}
       {showSuccess && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-[#121835] border-[#1F3B8A]/50 rounded-2xl p-8 text-center animate-in fade-in zoom-in duration-500">
             <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
               <CheckCircle className="w-12 h-12 text-white" />
