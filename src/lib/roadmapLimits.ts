@@ -1,12 +1,146 @@
-// src/app/api/generateGoalRoadmap/route.ts
+// src/lib/roadmapLimits.ts
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export interface RoadmapLimitResult {
+  canCreate: boolean;
+  remainingCount?: number;
+  message?: string;
+  plan?: 'FREE' | 'PREMIUM';
+  isWeeklyLimitReached?: boolean;
+}
+
+export const ROADMAP_LIMITS = {
+  FREE_WEEKLY_LIMIT: 3,
+  PREMIUM_UNLIMITED: true
+} as const;
+
+/**
+ * Check if a user can create more roadmaps based on their plan and usage
+ */
+export async function checkUserRoadmapLimits(userId: string): Promise<RoadmapLimitResult> {
+  try {
+    // Get user with their plan
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { 
+        plan: true,
+        subscriptionStatus: true
+      }
+    });
+
+    if (!user) {
+      return { 
+        canCreate: false, 
+        message: 'User not found' 
+      };
+    }
+
+    // Premium users with active subscription have unlimited access
+    if (user.plan === 'PREMIUM' && user.subscriptionStatus === 'ACTIVE') {
+      return { 
+        canCreate: true,
+        plan: 'PREMIUM'
+      };
+    }
+
+    // For free users, check weekly limit
+    const { startOfWeek, endOfWeek } = getCurrentWeekBounds();
+
+    const weeklyRoadmapCount = await prisma.roadmap.count({
+      where: {
+        userId: userId,
+        createdAt: {
+          gte: startOfWeek,
+          lt: endOfWeek
+        }
+      }
+    });
+
+    const remainingCount = Math.max(0, ROADMAP_LIMITS.FREE_WEEKLY_LIMIT - weeklyRoadmapCount);
+    const isWeeklyLimitReached = weeklyRoadmapCount >= ROADMAP_LIMITS.FREE_WEEKLY_LIMIT;
+
+    if (isWeeklyLimitReached) {
+      return { 
+        canCreate: false, 
+        remainingCount: 0,
+        plan: 'FREE',
+        isWeeklyLimitReached: true,
+        message: `Free users can create up to ${ROADMAP_LIMITS.FREE_WEEKLY_LIMIT} roadmaps per week. You've reached your weekly limit. Upgrade to Premium for unlimited roadmaps.`
+      };
+    }
+
+    return { 
+      canCreate: true, 
+      remainingCount,
+      plan: 'FREE',
+      isWeeklyLimitReached: false
+    };
+
+  } catch (error) {
+    console.error('Error checking roadmap limits:', error);
+    return { 
+      canCreate: false, 
+      message: 'Error checking roadmap limits. Please try again.' 
+    };
+  }
+}
+
+/**
+ * Get user's roadmap usage statistics
+ */
+export async function getUserRoadmapStats(userId: string) {
+  try {
+    const { startOfWeek, endOfWeek } = getCurrentWeekBounds();
+    
+    const [weeklyCount, totalCount, user] = await Promise.all([
+      prisma.roadmap.count({
+        where: {
+          userId: userId,
+          createdAt: {
+            gte: startOfWeek,
+            lt: endOfWeek
+          }
+        }
+      }),
+      prisma.roadmap.count({
+        where: { userId: userId }
+      }),
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: { 
+          plan: true,
+          subscriptionStatus: true
+        }
+      })
+    ]);
+
+    const remainingThisWeek = user?.plan === 'FREE' 
+      ? Math.max(0, ROADMAP_LIMITS.FREE_WEEKLY_LIMIT - weeklyCount)
+      : null;
+
+    return {
+      weeklyCount,
+      totalCount,
+      remainingThisWeek,
+      plan: user?.plan,
+      subscriptionStatus: user?.subscriptionStatus,
+      weeklyLimit: user?.plan === 'FREE' ? ROADMAP_LIMITS.FREE_WEEKLY_LIMIT : null
+    };
+
+  } catch (error) {
+    console.error('Error getting roadmap stats:', error);
+    throw new Error('Failed to get roadmap statistics');
+  }
+}
+
+/**
+ * Get the bounds of the current week (Sunday to Sunday)
+ */// src/app/api/generateGoalRoadmap/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { z } from 'zod';
-import { PrismaClient } from '@prisma/client';
-import { getAuth } from "@clerk/nextjs/server";
-
-// Initialize Prisma
-const prisma = new PrismaClient();
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
@@ -21,69 +155,7 @@ const GoalRoadmapSchema = z.object({
   focus: z.array(z.string()).optional().default([])
 });
 
-
-
-// Function to check if user can create more roadmaps
-async function checkRoadmapLimit(userId: string): Promise<{ canCreate: boolean; remainingCount?: number; message?: string }> {
-  try {
-    // Get user with their plan
-    
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { 
-        plan: true,
-        subscriptionStatus: true
-      }
-    });
-
-    if (!user) {
-      return { canCreate: false, message: 'User not found' };
-    }
-
-    // Premium users have unlimited access
-    if (user.plan === 'PREMIUM' && user.subscriptionStatus === 'ACTIVE') {
-      return { canCreate: true };
-    }
-
-    // For free users, check weekly limit
-    const startOfWeek = new Date();
-    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Get Sunday
-    startOfWeek.setHours(0, 0, 0, 0);
-
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(endOfWeek.getDate() + 7);
-
-    const weeklyRoadmapCount = await prisma.roadmap.count({
-      where: {
-        userId: userId,
-        createdAt: {
-          gte: startOfWeek,
-          lt: endOfWeek
-        }
-      }
-    });
-
-    const FREE_WEEKLY_LIMIT = 3;
-    const remainingCount = Math.max(0, FREE_WEEKLY_LIMIT - weeklyRoadmapCount);
-
-    if (weeklyRoadmapCount >= FREE_WEEKLY_LIMIT) {
-      return { 
-        canCreate: false, 
-        remainingCount: 0,
-        message: `Free users can create up to ${FREE_WEEKLY_LIMIT} roadmaps per week. You've reached your limit. Upgrade to Premium for unlimited roadmaps.`
-      };
-    }
-
-    return { 
-      canCreate: true, 
-      remainingCount 
-    };
-
-  } catch (error) {
-    console.error('Error checking roadmap limit:', error);
-    return { canCreate: false, message: 'Error checking roadmap limits' };
-  }
-}
+export const runtime = 'edge';
 
 function generateGoalBasedPrompt(settings: z.infer<typeof GoalRoadmapSchema>) {
   const { topic, targetRole, timeframe, experience, focus } = settings;
@@ -246,31 +318,6 @@ function generateAIFeedback(roadmap: any, settings: z.infer<typeof GoalRoadmapSc
 
 export async function POST(request: NextRequest) {
   try {
-    // Get user authentication
-    const { userId } = getAuth(request);
-    
-    
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-
-    // Check roadmap creation limit
-    const limitCheck = await checkRoadmapLimit(userId);
-    
-    if (!limitCheck.canCreate) {
-      return NextResponse.json(
-        { 
-          error: 'Roadmap limit reached, Please upgrade your plan',
-          message: limitCheck.message,
-          upgrade: true // Signal frontend to show upgrade option
-        },
-        { status: 403 }
-      );
-    }
-
     const body = await request.json();
     
     // Validate request body
@@ -302,7 +349,7 @@ export async function POST(request: NextRequest) {
     const aiFeedback = generateAIFeedback({ weeks }, settings);
 
     // Create final goal-based roadmap
-    const roadmapData = {
+    const roadmap = {
       title: `${settings.targetRole} Learning Path`,
       goalDescription: `Become a ${settings.targetRole} specializing in ${settings.topic} within ${settings.timeframe} weeks`,
       totalWeeks: settings.timeframe,
@@ -339,29 +386,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Save roadmap to database
-    const savedRoadmap = await prisma.roadmap.create({
-      data: {
-        userId: userId,
-        title: roadmapData.title,
-        topic: settings.topic,
-        targetRole: settings.targetRole,
-        timeframe: settings.timeframe,
-        experience: settings.experience,
-        focus: settings.focus,
-        roadmapData: roadmapData,
-        currentWeek: 1
-      }
-    });
 
-    // Add database ID to response
-    const finalRoadmap = {
-      ...roadmapData,
-      id: savedRoadmap.id,
-      remainingCreations: limitCheck.remainingCount ? limitCheck.remainingCount - 1 : undefined
-    };
-
-    return NextResponse.json(finalRoadmap);
+    return NextResponse.json(roadmap);
     
   } catch (error) {
     console.error('Error generating goal-based roadmap:', error);
@@ -403,7 +429,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET endpoint to retrieve roadmap templates, examples, or user's roadmap stats
+// GET endpoint to retrieve roadmap templates or examples
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const type = searchParams.get('type');
@@ -442,43 +468,48 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({ templates });
   }
-
-  if (type === 'limits') {
-    try {
-     const { userId } = getAuth(request);
-      
-      if (!userId) {
-        return NextResponse.json(
-          { error: 'Authentication required' },
-          { status: 401 }
-        );
-      }
-
-      const limitCheck = await checkRoadmapLimit(userId);
-      
-      // Get user plan for frontend display
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { plan: true, subscriptionStatus: true }
-      });
-
-      return NextResponse.json({
-        canCreate: limitCheck.canCreate,
-        remainingCount: limitCheck.remainingCount,
-        message: limitCheck.message,
-        plan: user?.plan,
-        subscriptionStatus: user?.subscriptionStatus,
-        weeklyLimit: user?.plan === 'FREE' ? 3 : null
-      });
-
-    } catch (error) {
-      console.error('Error checking limits:', error);
-      return NextResponse.json(
-        { error: 'Failed to check roadmap limits' },
-        { status: 500 }
-      );
-    }
-  }
   
   return NextResponse.json({ error: 'Invalid request type' }, { status: 400 });
+}
+export function getCurrentWeekBounds() {
+  const now = new Date();
+  const startOfWeek = new Date(now);
+  
+  // Set to Sunday of current week
+  startOfWeek.setDate(now.getDate() - now.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(endOfWeek.getDate() + 7);
+
+  return { startOfWeek, endOfWeek };
+}
+
+/**
+ * Check if user needs to upgrade to create more roadmaps
+ */
+export function shouldShowUpgradePrompt(limitResult: RoadmapLimitResult): boolean {
+  return limitResult.plan === 'FREE' && 
+         (limitResult.isWeeklyLimitReached || (limitResult.remainingCount ?? 0) <= 1);
+}
+
+/**
+ * Get upgrade message based on current usage
+ */
+export function getUpgradeMessage(limitResult: RoadmapLimitResult): string | null {
+  if (limitResult.plan === 'PREMIUM') return null;
+  
+  if (limitResult.isWeeklyLimitReached) {
+    return "You've reached your weekly limit of 3 roadmaps. Upgrade to Premium for unlimited roadmap creation!";
+  }
+  
+  if (limitResult.remainingCount === 1) {
+    return "You have 1 roadmap creation left this week. Upgrade to Premium for unlimited access!";
+  }
+  
+  if (limitResult.remainingCount === 0) {
+    return "Upgrade to Premium to create unlimited roadmaps and unlock all features!";
+  }
+  
+  return null;
 }

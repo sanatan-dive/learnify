@@ -82,7 +82,7 @@ export default function PricingPlans({ userId }: { userId: string }) {
     <>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       
-      <div className="min-h-screen absolute  py-16 px-4" >
+      <div className="min-h-screen py-16 px-4" >
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
@@ -211,7 +211,7 @@ export default function PricingPlans({ userId }: { userId: string }) {
                       disabled={isLoading || plan.buttonText === "Current Plan"}
                       className={`w-full py-4 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 ${
                         plan.isPopular
-                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-lg hover:shadow-blue-500/30'
+                          ? 'bg-gradient-to-r from-blue-700 to-blue-400 hover:from-blue-800 hover:to-blue-500 text-white shadow-lg hover:shadow-blue-500/30'
                           : 'bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white border border-gray-600 hover:border-gray-500'
                       } ${
                         plan.buttonText === "Current Plan" ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'

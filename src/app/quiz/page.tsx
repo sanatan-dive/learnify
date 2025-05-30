@@ -83,7 +83,7 @@ export default function QuizPage() {
         setError(data.error || 'Failed to fetch quiz records');
       }
     } catch (err) {
-      setError('An error occurred while fetching quiz records');
+      setError('An errore occurred while fetching quiz records');
     } finally {
       setRecordsLoading(false);
     }
@@ -211,7 +211,7 @@ export default function QuizPage() {
   };
 
   const renderUserAnalysis = () => (
-    <Card className="bg-[#121835] border border-[#1F3B8A]/30 hover:border-[#4F7DFB]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#1F3B8A]/20 group">
+    <Card className="bg-[#121835] border border-[#1F3B8A]/30 min-h-[374px] hover:border-[#4F7DFB]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#1F3B8A]/20 group">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-3 text-[#E0F2FF] group-hover:text-white transition-colors duration-300">
           <div className="p-2 bg-gradient-to-br from-[#1F3B8A] to-[#254EDB] rounded-lg group-hover:scale-110 transition-transform duration-300">
@@ -236,7 +236,7 @@ export default function QuizPage() {
         
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center p-4 bg-[#0A0F2C] rounded-lg hover:bg-[#1A1F3C] transition-colors duration-300 group/stat">
-            <div className="text-3xl font-bold text-[#E0F2FF] group-hover/stat:scale-110 transition-transform duration-300">24</div>
+            <div className="text-3xl font-bold text-[#E0F2FF] group-hover/stat:scale-110 transition-transform duration-300">{quizRecords.length}</div>
             <div className="text-xs text-[#A0A0A0] mt-1">Quizzes Taken</div>
           </div>
           <div className="text-center p-4 bg-[#0A0F2C] rounded-lg hover:bg-[#1A1F3C] transition-colors duration-300 group/stat">
@@ -244,7 +244,7 @@ export default function QuizPage() {
             <div className="text-xs text-[#A0A0A0] mt-1">Topics Mastered</div>
           </div>
         </div>
-
+      <div className='flex gap-4'>
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Star className="w-4 h-4 text-[#4F7DFB]" />
@@ -279,6 +279,7 @@ export default function QuizPage() {
               </span>
             ))}
           </div>
+        </div>
         </div>
       </CardContent>
     </Card>
@@ -344,13 +345,6 @@ export default function QuizPage() {
             ))}
           </div>
         </div>
-
-        <div className="pt-4 border-t border-[#1F3B8A]/30">
-          <div className="flex items-center justify-between text-xs text-[#A0A0A0]">
-            <span>Last updated</span>
-            <span className="text-[#4F7DFB]">2 hours ago</span>
-          </div>
-        </div>
       </CardContent>
     </Card>
   );
@@ -368,7 +362,7 @@ export default function QuizPage() {
           </span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 max-h-96 overflow-y-auto">
+      <CardContent className="space-y-4 max-h-80 overflow-y-auto">
         {recordsLoading ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-[#4F7DFB]" />
@@ -432,7 +426,7 @@ export default function QuizPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column - Actions */}
         <div className="space-y-6">
-          <Card className="bg-gradient-to-br from-[#121835] to-[#0A0F2C] border-[#1F3B8A]/50 hover:border-[#4F7DFB] transition-all duration-500 hover:shadow-2xl hover:shadow-[#1F3B8A]/30 group overflow-hidden relative">
+          <Card className="bg-gradient-to-br min-h-[398px] from-[#121835] to-[#0A0F2C] border-[#1F3B8A]/50 hover:border-[#4F7DFB] transition-all duration-500 hover:shadow-2xl hover:shadow-[#1F3B8A]/30 group overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-to-br from-[#1F3B8A]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <CardHeader className="relative z-10">
               <CardTitle className="flex items-center gap-3 text-[#E0F2FF] group-hover:text-white transition-colors duration-300">
@@ -444,8 +438,34 @@ export default function QuizPage() {
             </CardHeader>
             <CardContent className="space-y-4 relative z-10">
               <p className="text-[#A0A0A0] group-hover:text-[#C0C0C0] transition-colors duration-300">
-                Challenge yourself with a custom quiz on any topic you choose.
+                Challenge yourself with a custom quiz on any topic you choose:
               </p>
+              <ul className="space-y-3 p-2">
+                <li className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded-full bg-[#4F7DFB] group-hover:bg-[#1F3B8A] transition-colors duration-300"></div>
+                  <p className="text-[#A0A0A0] group-hover:text-[#C0C0C0] transition-colors duration-300">
+                    Choose a topic
+                  </p>
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded-full bg-[#4F7DFB] group-hover:bg-[#1F3B8A] transition-colors duration-300"></div>
+                  <p className="text-[#A0A0A0] group-hover:text-[#C0C0C0] transition-colors duration-300">
+                    Set the level
+                  </p>
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded-full bg-[#4F7DFB] group-hover:bg-[#1F3B8A] transition-colors duration-300"></div>
+                  <p className="text-[#A0A0A0] group-hover:text-[#C0C0C0] transition-colors duration-300">
+                    Set the number of questions
+                  </p>
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded-full bg-[#4F7DFB] group-hover:bg-[#1F3B8A] transition-colors duration-300"></div>
+                  <p className="text-[#A0A0A0] group-hover:text-[#C0C0C0] transition-colors duration-300">
+                    Start the quiz
+                  </p>
+                </li>
+              </ul>
               <Button
                 onClick={handleNewQuiz}
                 className="w-full bg-gradient-to-r from-[#1F3B8A] to-[#254EDB] hover:from-[#254EDB] hover:to-[#4F7DFB] text-white font-medium py-4 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#1F3B8A]/50 group/btn"
@@ -458,13 +478,15 @@ export default function QuizPage() {
           </Card>
 
           {renderUserAnalysis()}
-          {renderQuizAnalysis()}
+          
         </div>
 
         {/* Right Column - Quiz History */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 flex flex-col gap-6">
           {renderQuizHistory()}
+          {renderQuizAnalysis()}
         </div>
+        
       </div>
     </div>
   );

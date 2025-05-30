@@ -49,6 +49,7 @@ model User {
   // Relationships
   bookmarks             Bookmark[]
   quizRecords           QuizRecord[]
+  roadmaps              Roadmap[]          // New relationship for roadmaps
 }
 
 model Blog {
@@ -126,4 +127,24 @@ model QuizRecord {
   score     Json     // Store score as { correct: number, total: number }
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// New model to track roadmap creation
+model Roadmap {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  title           String
+  topic           String
+  targetRole      String
+  timeframe       Int      // Number of weeks
+  experience      String   // beginner, intermediate, advanced
+  focus           Json?    // Array of focus areas
+  roadmapData     Json     // Store the complete roadmap structure
+  currentWeek     Int      @default(1)
+  completed       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([userId, createdAt])
 }

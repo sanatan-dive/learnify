@@ -33,7 +33,7 @@ export const SidebarComponent = ({ isLoading, children }: SidebarComponentProps)
   ];
 
   return (
-    <div className={cn("rounded-md relative  flex flex-col md:flex-row z-10 mx-auto border border-neutral-700 dark:border-neutral-600 overflow-hidden", "h-screen text-white")}>
+    <div className={cn(" relative  flex flex-col md:flex-row z-10 mx-auto border border-neutral-700 dark:border-neutral-600 overflow-hidden", "h-screen text-white")}>
       {!isLoading && (
         <>
           <Sidebar open={open} setOpen={setOpen}>
@@ -61,7 +61,20 @@ export const SidebarComponent = ({ isLoading, children }: SidebarComponentProps)
               </div>
               {isSignedIn && (
                 <SidebarLink
-                  link={{ label: user?.fullName || "Profile", href: "/profile", icon: <Image src={user?.imageUrl || ""} className="h-7 w-7 flex-shrink-0 rounded-full" width={50} height={50} alt="Avatar" /> }}
+                  link={{
+  label: user?.fullName || "Profile",
+  href: `/profile/${user?.username || user?.id}`,
+  icon: (
+    <Image
+      src={user?.imageUrl || ""}
+      className="h-7 w-7 flex-shrink-0 rounded-full"
+      width={50}
+      height={50}
+      alt="Avatar"
+    />
+  ),
+}}
+
                   className="hover:bg-neutral-800 hover:text-neutral-200 transition-colors duration-200 ease-in-out"
                 />
               )}

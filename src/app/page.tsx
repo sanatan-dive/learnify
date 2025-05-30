@@ -12,6 +12,7 @@ import { Youtube, BookOpen, PlayCircle, FileText } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import UpgradeButton from "@/components/Premium";
 import { useUser } from "@clerk/nextjs";
+import Footer from "@/components/Footer";
 
 const reviews = [
   {
@@ -142,6 +143,7 @@ export default function Home() {
   ];
 
   return (
+    <div>
     <div className="h-screen flex flex-col gap-8 justify-center items-center w-full  p-6">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
@@ -221,8 +223,11 @@ export default function Home() {
           <div className="pointer-events-none absolute inset-y-0 right-0 w-[10%] bg-gradient-to-l from-gray-950"></div>
         </div>
       </motion.div>
+      </div>
           
-      <div className="flex justify-center  z-50"><UpgradeButton userId={userId} /></div>
+      <div className="flex justify-center z-50"><UpgradeButton userId={userId} /></div>
+
+      <Footer />
 
       {isLoading && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
@@ -231,6 +236,7 @@ export default function Home() {
           </div>
         </div>
       )}
+    
     </div>
   );
 }
