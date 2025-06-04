@@ -246,3 +246,4 @@ function getMockQuestions(config: QuizConfig): Question[] {
   
   return questions;
 }
+
