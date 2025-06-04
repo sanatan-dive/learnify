@@ -100,7 +100,7 @@ export default function QuizPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/Features/Quiz/generate-quiz', {
+      const response = await fetch('/api/Features/generate-quiz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(quizConfig),
@@ -162,7 +162,7 @@ export default function QuizPage() {
 
     // Save the quiz record
     try {
-      await fetch('/api/Features/Quiz/quiz-records', {
+      await fetch('/api/Features/quiz-records', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -172,7 +172,7 @@ export default function QuizPage() {
         }),
       });
       // Refresh records after saving
-      const response = await fetch('/api/Features/Quiz/quiz-records', {
+      const response = await fetch('/api/Features/quiz-records', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
