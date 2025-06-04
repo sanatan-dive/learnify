@@ -1,9 +1,18 @@
-"use client";
+"use client"
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, CheckCircle, XCircle, Target, Award, Brain, TrendingUp, BookOpen, Plus, ChevronRight, Clock, Trophy, Star, ArrowLeft } from 'lucide-react';
+
+import { Prisma } from '@prisma/client';
+import { getAuth } from '@clerk/nextjs/server';
+import { useUser } from '@clerk/nextjs';
+
+const getCurrentUserId = () => {
+  // Replace this with your actual authentication logic
+  return "user-id-from-auth"; // Example user ID (or null if not authenticated)
+};
 
 interface QuizQuestion {
   question: string;
@@ -27,99 +36,7 @@ interface QuizRecord {
 
 type QuizStep = 0 | 1 | 2 | 3 | 4;
 
-// Sample quiz data generator
-const generateQuizQuestions = (config: QuizConfig): QuizQuestion[] => {
-  const sampleQuestions: Record<string, QuizQuestion[]> = {
-    javascript: [
-      {
-        question: "What is the correct way to declare a variable in JavaScript?",
-        options: ["var myVar;", "variable myVar;", "v myVar;", "declare myVar;"],
-        correctAnswer: "var myVar;"
-      },
-      {
-        question: "Which method is used to add an element to the end of an array?",
-        options: ["push()", "pop()", "shift()", "unshift()"],
-        correctAnswer: "push()"
-      },
-      {
-        question: "What does '===' operator do in JavaScript?",
-        options: ["Assigns value", "Compares value only", "Compares value and type", "Creates a function"],
-        correctAnswer: "Compares value and type"
-      },
-      {
-        question: "Which of the following is NOT a JavaScript data type?",
-        options: ["String", "Boolean", "Float", "Undefined"],
-        correctAnswer: "Float"
-      },
-      {
-        question: "What is the output of typeof null in JavaScript?",
-        options: ["null", "undefined", "object", "string"],
-        correctAnswer: "object"
-      }
-    ],
-    react: [
-      {
-        question: "What is JSX in React?",
-        options: ["A JavaScript extension", "A CSS preprocessor", "A database", "A testing framework"],
-        correctAnswer: "A JavaScript extension"
-      },
-      {
-        question: "Which hook is used to manage state in functional components?",
-        options: ["useEffect", "useState", "useContext", "useReducer"],
-        correctAnswer: "useState"
-      },
-      {
-        question: "What is the virtual DOM?",
-        options: ["A real DOM", "A JavaScript representation of the DOM", "A CSS framework", "A testing tool"],
-        correctAnswer: "A JavaScript representation of the DOM"
-      },
-      {
-        question: "How do you pass data from parent to child component?",
-        options: ["Using state", "Using props", "Using context", "Using refs"],
-        correctAnswer: "Using props"
-      },
-      {
-        question: "What is the purpose of useEffect hook?",
-        options: ["To manage state", "To handle side effects", "To create components", "To style components"],
-        correctAnswer: "To handle side effects"
-      }
-    ],
-    python: [
-      {
-        question: "Which of the following is the correct way to create a list in Python?",
-        options: ["list = {1, 2, 3}", "list = [1, 2, 3]", "list = (1, 2, 3)", "list = <1, 2, 3>"],
-        correctAnswer: "list = [1, 2, 3]"
-      },
-      {
-        question: "What is the output of print(2 ** 3) in Python?",
-        options: ["6", "8", "9", "5"],
-        correctAnswer: "8"
-      },
-      {
-        question: "Which keyword is used to define a function in Python?",
-        options: ["function", "def", "func", "define"],
-        correctAnswer: "def"
-      },
-      {
-        question: "What is the correct way to create a dictionary in Python?",
-        options: ["dict = [key: value]", "dict = {key: value}", "dict = (key: value)", "dict = <key: value>"],
-        correctAnswer: "dict = {key: value}"
-      },
-      {
-        question: "Which method is used to add an item to a list?",
-        options: ["add()", "append()", "insert()", "push()"],
-        correctAnswer: "append()"
-      }
-    ]
-  };
 
-  const topicKey = config.topic.toLowerCase();
-  const availableQuestions = sampleQuestions[topicKey] || sampleQuestions.javascript;
-  
-  // Shuffle and select the requested number of questions
-  const shuffled = [...availableQuestions].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, Math.min(config.numQuestions, shuffled.length));
-};
 
 export default function QuizPage() {
   const [step, setStep] = useState<QuizStep>(4);
@@ -135,40 +52,48 @@ export default function QuizPage() {
   const [submittedAnswers, setSubmittedAnswers] = useState<boolean>(false);
   const [score, setScore] = useState<{ correct: number; total: number }>({ correct: 0, total: 0 });
   const [quizRecords, setQuizRecords] = useState<QuizRecord[]>([]);
+  const [recordsLoading, setRecordsLoading] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const difficultyOptions = ['beginner', 'intermediate', 'advanced'];
+  const { user } = useUser();
+  const userId = user?.id
 
-  // Load quiz records from memory (in a real app, this would be from localStorage or API)
   useEffect(() => {
-    // Initialize with some sample records
-    const sampleRecords: QuizRecord[] = [
-      {
-        id: '1',
-        topic: 'JavaScript',
-        level: 'intermediate',
-        score: { correct: 4, total: 5 },
-        createdAt: new Date(Date.now() - 86400000).toISOString()
-      },
-      {
-        id: '2',
-        topic: 'React',
-        level: 'beginner',
-        score: { correct: 3, total: 5 },
-        createdAt: new Date(Date.now() - 172800000).toISOString()
-      },
-      {
-        id: '3',
-        topic: 'Python',
-        level: 'advanced',
-        score: { correct: 5, total: 5 },
-        createdAt: new Date(Date.now() - 259200000).toISOString()
-      }
-    ];
-    setQuizRecords(sampleRecords);
-  }, []);
+  if (!userId) {
+    setIsAuthenticated(false);
+    setRecordsLoading(false);
+    return;
+  }
 
-  const updateConfig = <K extends keyof QuizConfig>(key: K, value: QuizConfig[K]) => {
+  setIsAuthenticated(true);
+  setRecordsLoading(true);
+
+  const fetchQuizRecords = async () => {
+    try {
+      const response = await fetch(`/api/Features/quiz-records?userId=${userId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setQuizRecords(data.records || []);
+      } else {
+        setError(data.error || 'Failed to fetch quiz records');
+      }
+    } catch (err) {
+      setError('An errore occurred while fetching quiz records');
+    } finally {
+      setRecordsLoading(false);
+    }
+  };
+
+  fetchQuizRecords();
+}, [userId]);
+
+
+   const updateConfig = <K extends keyof QuizConfig>(key: K, value: QuizConfig[K]) => {
     setQuizConfig((prev) => ({
       ...prev,
       [key]: value,
@@ -180,16 +105,23 @@ export default function QuizPage() {
     setError(null);
 
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const generatedQuiz = generateQuizQuestions(quizConfig);
-      
-      if (generatedQuiz.length > 0) {
-        setQuiz(generatedQuiz);
-        setStep(3);
+      const response = await fetch('/api/Features/generate-quiz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(quizConfig),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        if (Array.isArray(data.quiz) && data.quiz.length > 0) {
+          setQuiz(data.quiz);
+          setStep(3);
+        } else {
+          throw new Error('Invalid quiz format received');
+        }
       } else {
-        throw new Error('Could not generate quiz for this topic');
+        throw new Error(data.error || 'Failed to generate quiz');
       }
     } catch (err) {
       setError(
@@ -203,7 +135,10 @@ export default function QuizPage() {
     }
   };
 
-  const handleSelectAnswer = (questionIndex: number, option: string) => {
+  
+  
+
+ const handleSelectAnswer = (questionIndex: number, option: string) => {
     if (submittedAnswers) return;
 
     setSelectedAnswers((prev) => ({
@@ -229,22 +164,33 @@ export default function QuizPage() {
 
     setScore(newScore);
     setSubmittedAnswers(true);
-    setShowSuccess(true);
 
-    // Save the quiz record to memory
-    const newRecord: QuizRecord = {
-      id: Date.now().toString(),
-      topic: quizConfig.topic,
-      level: quizConfig.level,
-      score: newScore,
-      createdAt: new Date().toISOString(),
-    };
-
-    setQuizRecords(prev => [newRecord, ...prev]);
-
-    // Hide success animation after 3 seconds
-    setTimeout(() => setShowSuccess(false), 3000);
+    // Save the quiz record
+    try {
+      await fetch('/api/Features/quiz-records', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: quizConfig.topic,
+          level: quizConfig.level,
+          score: newScore,
+        }),
+      });
+      // Refresh records after saving
+      const response = await fetch('/api/Features/quiz-records', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setQuizRecords(data.records || []);
+      }
+    } catch (err) {
+      console.error('Error saving quiz record:', err);
+    }
   };
+
+  
 
   const handleRetakeQuiz = () => {
     setSelectedAnswers({});
@@ -264,149 +210,6 @@ export default function QuizPage() {
     setStep(0);
   };
 
-  const renderUserAnalysis = () => {
-    const avgScore = quizRecords.length > 0 
-      ? Math.round(quizRecords.reduce((acc, record) => acc + (record.score.correct / record.score.total), 0) / quizRecords.length * 100)
-      : 0;
-
-    return (
-      <Card className="bg-[#121835] border border-[#1F3B8A]/30 min-h-[374px] hover:border-[#4F7DFB]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#1F3B8A]/20 group">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-3 text-[#E0F2FF] group-hover:text-white transition-colors duration-300">
-            <div className="p-2 bg-gradient-to-br from-[#1F3B8A] to-[#254EDB] rounded-lg group-hover:scale-110 transition-transform duration-300">
-              <Brain className="w-5 h-5 text-white" />
-            </div>
-            User Analysis
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-[#A0A0A0]">Overall Performance</span>
-              <span className="text-2xl font-bold text-[#E0F2FF]">{avgScore}%</span>
-            </div>
-            <div className="w-full bg-[#0A0F2C] rounded-full h-3 overflow-hidden">
-              <div 
-                className="bg-gradient-to-r from-[#1F3B8A] via-[#4F7DFB] to-[#78A3FB] h-3 rounded-full transition-all duration-1000 ease-out" 
-                style={{width: `${avgScore}%`}}
-              ></div>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-4 bg-[#0A0F2C] rounded-lg hover:bg-[#1A1F3C] transition-colors duration-300 group/stat">
-              <div className="text-3xl font-bold text-[#E0F2FF] group-hover/stat:scale-110 transition-transform duration-300">{quizRecords.length}</div>
-              <div className="text-xs text-[#A0A0A0] mt-1">Quizzes Taken</div>
-            </div>
-            <div className="text-center p-4 bg-[#0A0F2C] rounded-lg hover:bg-[#1A1F3C] transition-colors duration-300 group/stat">
-              <div className="text-3xl font-bold text-[#E0F2FF] group-hover/stat:scale-110 transition-transform duration-300">
-                {new Set(quizRecords.map(r => r.topic)).size}
-              </div>
-              <div className="text-xs text-[#A0A0A0] mt-1">Topics Covered</div>
-            </div>
-          </div>
-
-          <div className="flex gap-4">
-            <div className="space-y-3 flex-1">
-              <div className="flex items-center gap-2">
-                <Star className="w-4 h-4 text-[#4F7DFB]" />
-                <span className="text-sm text-[#A0A0A0]">Strong Areas</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['JavaScript', 'React', 'CSS'].map((skill, index) => (
-                  <span 
-                    key={skill}
-                    className="px-3 py-1 bg-gradient-to-r from-green-900/50 to-green-800/50 text-green-300 text-xs rounded-full border border-green-700/30 hover:border-green-500/50 transition-all duration-300 hover:scale-105"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-3 flex-1">
-              <div className="flex items-center gap-2">
-                <Target className="w-4 h-4 text-[#4F7DFB]" />
-                <span className="text-sm text-[#A0A0A0]">Focus Areas</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['Algorithms', 'Backend'].map((skill, index) => (
-                  <span 
-                    key={skill}
-                    className="px-3 py-1 bg-gradient-to-r from-red-900/50 to-red-800/50 text-red-300 text-xs rounded-full border border-red-700/30 hover:border-red-500/50 transition-all duration-300 hover:scale-105"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
-
-  const renderQuizAnalysis = () => (
-    <Card className="bg-[#121835] border border-[#1F3B8A]/30 hover:border-[#4F7DFB]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#1F3B8A]/20 group">
-      <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-3 text-[#E0F2FF] group-hover:text-white transition-colors duration-300">
-          <div className="p-2 bg-gradient-to-br from-[#1F3B8A] to-[#254EDB] rounded-lg group-hover:scale-110 transition-transform duration-300">
-            <TrendingUp className="w-5 h-5 text-white" />
-          </div>
-          Quiz Analytics
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { label: 'Avg Score', value: `${quizRecords.length > 0 ? Math.round(quizRecords.reduce((acc, r) => acc + (r.score.correct / r.score.total), 0) / quizRecords.length * 100) : 0}%`, icon: Trophy },
-            { label: 'Difficulty', value: '3.2', icon: Target },
-            { label: 'Avg Time', value: '12m', icon: Clock }
-          ].map(({ label, value, icon: Icon }, index) => (
-            <div 
-              key={label}
-              className="text-center p-3 bg-[#0A0F2C] rounded-lg hover:bg-[#1A1F3C] transition-all duration-300 group/metric hover:scale-105"
-            >
-              <Icon className="w-5 h-5 text-[#4F7DFB] mx-auto mb-2 group-hover/metric:text-[#78A3FB] transition-colors duration-300" />
-              <div className="text-xl font-bold text-[#E0F2FF]">{value}</div>
-              <div className="text-xs text-[#A0A0A0]">{label}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="space-y-4">
-          <h4 className="text-sm font-medium text-[#E0F2FF] flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-[#4F7DFB]" />
-            Popular Topics
-          </h4>
-          <div className="space-y-3">
-            {[
-              { topic: 'JavaScript', percentage: 90 },
-              { topic: 'React', percentage: 75 },
-              { topic: 'Python', percentage: 60 },
-              { topic: 'CSS', percentage: 45 }
-            ].map(({ topic, percentage }, index) => (
-              <div 
-                key={topic} 
-                className="flex justify-between items-center group/topic"
-              >
-                <span className="text-sm text-[#A0A0A0] group-hover/topic:text-[#C0C0C0] transition-colors duration-300">{topic}</span>
-                <div className="flex items-center gap-3">
-                  <div className="w-20 bg-[#0A0F2C] rounded-full h-2 overflow-hidden">
-                    <div 
-                      className="bg-gradient-to-r from-[#1F3B8A] to-[#4F7DFB] h-2 rounded-full transition-all duration-1000 ease-out" 
-                      style={{width: `${percentage}%`}}
-                    ></div>
-                  </div>
-                  <span className="text-sm text-[#E0F2FF] w-10 text-right font-medium">{percentage}%</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
 
   const renderQuizHistory = () => (
     <Card className="bg-[#121835] border border-[#1F3B8A]/30 hover:border-[#4F7DFB]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#1F3B8A]/20">
@@ -422,7 +225,11 @@ export default function QuizPage() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 max-h-80 overflow-y-auto">
-        {quizRecords.length === 0 ? (
+        {recordsLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-[#4F7DFB]" />
+          </div>
+        ) : quizRecords.length === 0 ? (
           <div className="text-center py-8">
             <Trophy className="w-12 h-12 text-[#4F7DFB] mx-auto mb-4 opacity-50" />
             <p className="text-[#A0A0A0]">No quiz records found</p>
@@ -433,6 +240,7 @@ export default function QuizPage() {
             <div 
               key={record.id} 
               className="p-4 bg-[#0A0F2C] rounded-lg border border-[#1F3B8A]/20 hover:border-[#4F7DFB]/40 hover:bg-[#1A1F3C] transition-all duration-300 group hover:scale-[1.02] hover:shadow-lg"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="flex justify-between items-start mb-3">
                 <h4 className="font-medium text-[#E0F2FF] text-sm group-hover:text-white transition-colors duration-300">{record.topic}</h4>
@@ -469,8 +277,8 @@ export default function QuizPage() {
   const renderMainDashboard = () => (
     <div className="space-y-8">
       <div className="text-center">
-        <h1 className="text-6xl font-bold mb-4 font-serif bg-gradient-to-r from-[#4F7DFB] to-[#78A3FB] bg-clip-text text-transparent">
-          Quiz Generator
+        <h1 className="text-6xl font-bold   mb-4 font-serif">
+          Quiz generator
         </h1>
         <p className="text-xl text-[#A0A0A0]">
           Create custom quizzes tailored to your learning needs
@@ -531,20 +339,22 @@ export default function QuizPage() {
             </CardContent>
           </Card>
 
-          {renderUserAnalysis()}
+       
+          
         </div>
 
         {/* Right Column - Quiz History */}
         <div className="lg:col-span-2 flex flex-col gap-6">
           {renderQuizHistory()}
-          {renderQuizAnalysis()}
+         
         </div>
+        
       </div>
     </div>
   );
 
   const renderConfigStep = (stepNumber: QuizStep, title: string, description: string, children: React.ReactNode) => (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <Card className="w-full max-w-md bg-[#121835] border-[#1F3B8A]/50 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <CardHeader className="text-center">
           <div className="w-16 h-16 bg-gradient-to-br from-[#1F3B8A] to-[#254EDB] rounded-full flex items-center justify-center mx-auto mb-4">
@@ -555,14 +365,6 @@ export default function QuizPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           {children}
-          <Button
-            onClick={() => setStep(4)}
-            variant="outline"
-            className="w-full bg-transparent border-[#1F3B8A]/50 text-[#A0A0A0] hover:bg-[#1F3B8A]/20 hover:text-[#E0F2FF]"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Dashboard
-          </Button>
         </CardContent>
       </Card>
     </div>
@@ -572,7 +374,7 @@ export default function QuizPage() {
     <div className="space-y-8">
       {/* Success Animation */}
       {showSuccess && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-[#121835] border-[#1F3B8A]/50 rounded-2xl p-8 text-center animate-in fade-in zoom-in duration-500">
             <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
               <CheckCircle className="w-12 h-12 text-white" />
@@ -731,7 +533,7 @@ export default function QuizPage() {
   );
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="min-h-screen bg-transparent text-white">
       <div className="container mx-auto px-6 py-8">
         {step === 4 && renderMainDashboard()}
         {step === 3 && renderQuizDisplay()}
@@ -754,7 +556,16 @@ export default function QuizPage() {
             >
               Next Step
               <ChevronRight className="w-5 h-5 ml-2" />
+              
             </Button>
+             <Button
+            onClick={() => setStep(4)}
+            variant="outline"
+            className="w-full bg-transparent border-[#1F3B8A]/50 text-[#A0A0A0] hover:bg-[#1F3B8A]/20 hover:text-[#E0F2FF]"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Dashboard
+          </Button>
           </>
         )}
 
@@ -779,6 +590,7 @@ export default function QuizPage() {
               >
                 {option.charAt(0).toUpperCase() + option.slice(1)}
               </Button>
+              
             ))}
           </div>
         )}
@@ -814,6 +626,14 @@ export default function QuizPage() {
                 </>
               )}
             </Button>
+                <Button
+            onClick={() => setStep(4)}
+            variant="outline"
+            className="w-full bg-transparent border-[#1F3B8A]/50 text-[#A0A0A0] hover:bg-[#1F3B8A]/20 hover:text-[#E0F2FF]"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Dashboard
+          </Button>
             {error && (
               <div className="p-4 bg-red-900/30 border border-red-500/50 rounded-lg">
                 <p className="text-red-300 text-sm">{error}</p>
