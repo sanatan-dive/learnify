@@ -49,12 +49,14 @@ export const SidebarComponent = ({ isLoading, children }: SidebarComponentProps)
                   <SidebarLink
                     link={{ label: "Logout", href: "#", icon: <IconArrowLeft className="text-neutral-200 h-5 w-5 flex-shrink-0" /> }}
                     className="hover:bg-slate-800 hover:rounded-xl mt-2 hover:text-neutral-200 z-50 transition-colors duration-200 ease-in-out"
+                    // @ts-ignore
                     onClick={() => setShowLogoutDialog(true)}
                   />
                 ) : (
                   <SidebarLink
                     link={{ label: "Sign In", href: "#", icon: <IconArrowRight className="text-neutral-200 z-50 h-5 w-5 flex-shrink-0" /> }}
                     className="hover:bg-slate-800 hover:rounded-xl z-50 hover:text-neutral-200 transition-colors duration-200 ease-in-out"
+                    // @ts-ignore
                     onClick={() => setShowSigninDialog(true)}
                   />
                 )}

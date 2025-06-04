@@ -1,4 +1,4 @@
-import React, { useState as useStateHook, useEffect } from "react";
+import React, { useState as useStateHook, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
@@ -14,7 +14,8 @@ interface LandingPageContentProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) => {
+// Create a separate component for the search params logic
+const LandingPageContentInner = ({ setIsLoading }: LandingPageContentProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const query = searchParams.get("query");
@@ -215,5 +216,21 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
         )}
       </AnimatePresence>
     </div>
+  );
+};
+
+// Fallback component for Suspense
+const SearchParamsFallback = () => (
+  <div className="p-10 h-screen flex flex-col justify-center items-center w-full text-white relative">
+    <SkeletonLoader />
+  </div>
+);
+
+// Main export with Suspense wrapper
+export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) => {
+  return (
+    <Suspense fallback={<SearchParamsFallback />}>
+      <LandingPageContentInner setIsLoading={setIsLoading} />
+    </Suspense>
   );
 };
