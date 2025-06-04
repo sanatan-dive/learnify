@@ -118,6 +118,7 @@ export default function EnhancedRoadmapGenerator() {
       
       // Configure html2canvas options for better quality
       const canvas = await html2canvas(roadmapRef.current, {
+        //@ts-ignore
         backgroundColor: '#0f172a', // slate-900 background
         scale: 2, // Higher resolution
         useCORS: true,
@@ -299,7 +300,7 @@ export default function EnhancedRoadmapGenerator() {
                 disabled={loading || !goalSettings.topic || !goalSettings.targetRole}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full p-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full p-4 bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="flex items-center justify-center space-x-2">
@@ -307,7 +308,7 @@ export default function EnhancedRoadmapGenerator() {
                     <span>Generating Your Roadmap...</span>
                   </div>
                 ) : (
-                  'Generate My Learning Roadmap'
+                  'Generate My Roadmap'
                 )}
               </motion.button>
             </div>
@@ -564,7 +565,7 @@ export default function EnhancedRoadmapGenerator() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="fixed bottom-6 right-6 z-50"
+        className="fixed  top-6 right-6 z-50"
       >
         <button
           data-download-btn

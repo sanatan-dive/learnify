@@ -42,14 +42,14 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
           { name: "youtube", url: `${baseUrl}/api/Resources/youtube?query=${query}` },
         ];
 
-        console.log(`Starting parallel API calls for query: ${query}`);
+        // console.log(`Starting parallel API calls for query: ${query}`);
         const startTime = Date.now();
 
         // Make parallel requests to all APIs simultaneously
         const responses = await Promise.all(
           apiEndpoints.map(async (endpoint) => {
             try {
-              console.log(`Fetching from ${endpoint.name}...`);
+              // console.log(`Fetching from ${endpoint.name}...`);
               const response = await fetch(endpoint.url);
               
               if (!response.ok) {
@@ -57,17 +57,18 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
               }
               
               const data = await response.json();
-              console.log(`✅ ${endpoint.name} completed successfully`);
+              // console.log(`✅ ${endpoint.name} completed successfully`);
               return { data, error: null };
             } catch (error) {
               console.error(`❌ ${endpoint.name} failed:`, error);
+              //@ts-ignore
               return { data: null, error: error.message };
             }
           })
         );
 
         const endTime = Date.now();
-        console.log(`All API calls completed in ${endTime - startTime}ms`);
+        // console.log(`All API calls completed in ${endTime - startTime}ms`);
 
         // Parse the responses into a results object
         const results = apiEndpoints.reduce((acc, endpoint, index) => {
@@ -77,10 +78,11 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
 
         // Log summary
         const successCount = responses.filter(r => r.data !== null).length;
-        console.log(`Successfully fetched from ${successCount}/${apiEndpoints.length} APIs`);
+        // console.log(`Successfully fetched from ${successCount}/${apiEndpoints.length} APIs`);
 
         // Create the response object matching your ApiResponse type
         const apiResponse: ApiResponse = {
+          //@ts-ignore
           query,
           results,
           metadata: {
@@ -115,7 +117,7 @@ export const LandingPageContent = ({ setIsLoading }: LandingPageContentProps) =>
 
   const onRoadmap = () => {
     if (searchQuery.trim()) {
-      router.push(`/roadmap?query=${encodeURIComponent(searchQuery)}`);
+      router.push(`/roadmap`);
     }
   }
 

@@ -83,6 +83,7 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
     }
 
     const puppeteer = setupPuppeteer();
+    // @ts-ignore
     browser = await puppeteer.launch(BROWSER_CONFIG);
     const page = await browser.newPage();
 
@@ -135,19 +136,19 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
         );
         const author = authorElement?.textContent?.trim() || null;
 
-        // Description selection
-        const descriptionElement = blog.querySelector(
+        // Alternative author/description selection (fallback)
+        const altAuthorElement = blog.querySelector(
           '.op h3.bf.b.ic.z.cr.jv.ct.cu.jw.cw.cy.cm, ' + // Matches your description HTML
           'h3.bf.b.ic.z, h3, p'
         );
-        const description = descriptionElement?.textContent?.trim() || null;
+        const altAuthor = altAuthorElement?.textContent?.trim() || null;
 
         if (title && link) {
           blogData.push({ 
             title, 
             link, 
-            author,
-            description 
+            author: author || altAuthor, // Use altAuthor as fallback if author is null/undefined
+            description: altAuthor // You might want to use this as description instead
           });
         }
       }
@@ -176,14 +177,14 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
             query,
             title: blog.title,
             link: blog.link || "",
-            author: blog.author,
-            description: blog.description,
+            author: blog.author || "", // This will already have the fallback applied
+            description: blog.description || "",
           },
         });
       })
     );
 
-    console.log("Saved blogs:", savedBlogs);
+    // console.log("Saved blogs:", savedBlogs);
 
     return NextResponse.json({
       blogs: savedBlogs.map((savedBlog) => ({

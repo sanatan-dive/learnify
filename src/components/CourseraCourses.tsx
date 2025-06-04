@@ -135,7 +135,7 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
         </motion.h3>
 
         <div
-          className="overflow-y-auto max-h-[220px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" 
+          className="overflow-y-auto overflow-x-hidden  max-h-[220px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" 
           style={{
             scrollbarWidth: "thin",
           }}

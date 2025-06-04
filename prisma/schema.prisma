@@ -13,43 +13,43 @@ enum Plan {
 }
 
 enum SubscriptionStatus {
-  NONE        // No subscription
-  CREATED     // Subscription created but not yet active
-  ACTIVE      // Subscription is active
+  NONE // No subscription
+  CREATED // Subscription created but not yet active
+  ACTIVE // Subscription is active
   AUTHENTICATED // Payment authenticated
-  PENDING     // Payment pending
-  HALTED      // Temporarily paused
-  CANCELLED   // Cancelled by user
-  EXPIRED     // Reached end of billing cycles
-  FAILED      // Payment failed
+  PENDING // Payment pending
+  HALTED // Temporarily paused
+  CANCELLED // Cancelled by user
+  EXPIRED // Reached end of billing cycles
+  FAILED // Payment failed
 }
 
 model User {
-  id                    String             @id @default(cuid())
-  email                 String             @unique
-  firstName             String?
-  lastName              String?
-  imageUrl              String?
-  name                  String?            // Full name (helpful for Razorpay)
-  
+  id        String  @id @default(cuid())
+  email     String  @unique
+  firstName String?
+  lastName  String?
+  imageUrl  String?
+  name      String? // Full name (helpful for Razorpay)
+
   // Subscription and plan information
   plan                  Plan               @default(FREE)
   subscriptionStatus    SubscriptionStatus @default(NONE)
-  subscriptionStartDate DateTime?          // When the current subscription began
-  subscriptionEndDate   DateTime?          // When the current subscription will end
-  
+  subscriptionStartDate DateTime? // When the current subscription began
+  subscriptionEndDate   DateTime? // When the current subscription will end
+
   // Razorpay specific fields
-  razorpayCustomerId    String?            // Razorpay customer ID
-  razorpaySubscriptionId String?           // Razorpay subscription ID
-  
+  razorpayCustomerId     String? // Razorpay customer ID
+  razorpaySubscriptionId String? // Razorpay subscription ID
+
   // Timestamps
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relationships
-  bookmarks             Bookmark[]
-  quizRecords           QuizRecord[]
-  roadmaps              Roadmap[]          // New relationship for roadmaps
+  bookmarks   Bookmark[]
+  quizRecords QuizRecord[]
+  roadmaps    Roadmap[] // New relationship for roadmaps
 }
 
 model Blog {
@@ -65,29 +65,29 @@ model Blog {
 }
 
 model Courseracourse {
-  id              String     @id @default(cuid())
-  query           String
-  name            String
+  id               String     @id @default(cuid())
+  query            String
+  name             String
   registrationLink String     @unique
-  description     String
-  thumbnail       String
-  workload        String
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  bookmarks       Bookmark[] @relation("CourseraCourseBookmarks")
+  description      String
+  thumbnail        String
+  workload         String
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  bookmarks        Bookmark[] @relation("CourseraCourseBookmarks")
 }
 
 model Udemycourse {
-  id              String     @id @default(cuid())
-  query           String
-  name            String
+  id               String     @id @default(cuid())
+  query            String
+  name             String
   registrationLink String     @unique
-  description     String
-  rating          Float
-  thumbnail       String
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  bookmarks       Bookmark[] @relation("UdemyCourseBookmarks")
+  description      String
+  rating           Float
+  thumbnail        String
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  bookmarks        Bookmark[] @relation("UdemyCourseBookmarks")
 }
 
 model Playlist {
@@ -103,20 +103,28 @@ model Playlist {
 }
 
 model Bookmark {
-  id           String         @id @default(cuid())
-  userId       String
-  user         User           @relation(fields: [userId], references: [id])
-  blogLink     String?        @unique
-  courseraLink String?        @unique
-  udemyLink    String?        @unique
-  playlistLink String?        @unique
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  blog         Blog?          @relation("BlogBookmarks", fields: [blogLink], references: [link], map: "bookmark_blog_fkey")
-  courseraCourse Courseracourse? @relation("CourseraCourseBookmarks", fields: [courseraLink], references: [registrationLink], map: "bookmark_coursera_fkey")
-  udemyCourse  Udemycourse?   @relation("UdemyCourseBookmarks", fields: [udemyLink], references: [registrationLink], map: "bookmark_udemy_fkey")
-  playlist     Playlist?      @relation("PlaylistBookmarks", fields: [playlistLink], references: [link], map: "bookmark_playlist_fkey")
+  id              String           @id @default(cuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  blogLink        String?
+  courseraLink    String?
+  udemyLink       String?
+  playlistLink    String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  blog            Blog?            @relation("BlogBookmarks", fields: [blogLink], references: [link], map: "bookmark_blog_fkey")
+  courseraCourse  Courseracourse?  @relation("CourseraCourseBookmarks", fields: [courseraLink], references: [registrationLink], map: "bookmark_coursera_fkey")
+  udemyCourse     Udemycourse?     @relation("UdemyCourseBookmarks", fields: [udemyLink], references: [registrationLink], map: "bookmark_udemy_fkey")
+  playlist        Playlist?        @relation("PlaylistBookmarks", fields: [playlistLink], references: [link], map: "bookmark_playlist_fkey")
+
+  // Composite unique constraints — allow per-user uniqueness
+  @@unique([userId, blogLink])
+  @@unique([userId, courseraLink])
+  @@unique([userId, udemyLink])
+  @@unique([userId, playlistLink])
 }
+
 
 model QuizRecord {
   id        String   @id @default(cuid())
@@ -124,27 +132,27 @@ model QuizRecord {
   user      User     @relation(fields: [userId], references: [id])
   topic     String
   level     String
-  score     Json     // Store score as { correct: number, total: number }
+  score     Json // Store score as { correct: number, total: number }
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 // New model to track roadmap creation
 model Roadmap {
-  id              String   @id @default(cuid())
-  userId          String
-  user            User     @relation(fields: [userId], references: [id])
-  title           String
-  topic           String
-  targetRole      String
-  timeframe       Int      // Number of weeks
-  experience      String   // beginner, intermediate, advanced
-  focus           Json?    // Array of focus areas
-  roadmapData     Json     // Store the complete roadmap structure
-  currentWeek     Int      @default(1)
-  completed       Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  title       String
+  topic       String
+  targetRole  String
+  timeframe   Int // Number of weeks
+  experience  String // beginner, intermediate, advanced
+  focus       Json? // Array of focus areas
+  roadmapData Json // Store the complete roadmap structure
+  currentWeek Int      @default(1)
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
   @@index([userId, createdAt])
 }

@@ -109,40 +109,44 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
   };
 
   const renderRatingStars = (rating: number) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
+  const stars = [];
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 !== 0;
 
-    for (let i = 1; i <= fullStars; i++) {
-      stars.push(
-        <Star
-          key={`full-${i}`}
-          className="w-4 h-4 text-yellow-400 fill-yellow-400"
-        />
-      );
-    }
+  // Render full stars
+  for (let i = 1; i <= fullStars; i++) {
+    stars.push(
+      <Star
+        key={`full-${i}`}
+        className="w-4 h-4 text-yellow-400 fill-yellow-400"
+      />
+    );
+  }
 
-    if (hasHalfStar) {
-      stars.push(
-        <div key="half-star" className="relative w-4 h-4">
+  // Render half star (left to right)
+  if (hasHalfStar) {
+    stars.push(
+      <div key="half-star" className="relative w-4 h-4">
+        {/* Empty star background */}
+        <Star className="w-4 h-4 text-gray-400 absolute inset-0" />
+        {/* Half-filled star overlay */}
+        <div className="absolute inset-0 overflow-hidden" style={{ width: '50%' }}>
           <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-          <div
-            className="absolute inset-0 w-1/2 h-full bg-gray-900"
-            style={{ clipPath: "inset(0 0)" }}
-          ></div>
         </div>
-      );
-    }
+      </div>
+    );
+  }
 
-    const remainingStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-    for (let i = 1; i <= remainingStars; i++) {
-      stars.push(
-        <Star key={`empty-${i}`} className="w-4 h-4 text-gray-400" />
-      );
-    }
+  // Render empty stars
+  const remainingStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  for (let i = 1; i <= remainingStars; i++) {
+    stars.push(
+      <Star key={`empty-${i}`} className="w-4 h-4 text-gray-400" />
+    );
+  }
 
-    return stars;
-  };
+  return stars;
+};
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -179,7 +183,7 @@ export default function CourseraCourses({ courses }: CourseraCoursesProps) {
 
         {/* Scrollable Container */}
         <div
-          className="overflow-y-auto max-h-[260px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-[400px] to max-h-[250px]
+          className="overflow-y-auto overflow-x-hidden max-h-[260px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-[400px] to max-h-[250px]
           style={{
             scrollbarWidth: "thin", // For Firefox
           }}

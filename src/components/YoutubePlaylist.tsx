@@ -141,7 +141,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
 
         {/* Scrollable Container */}
         <div
-          className="overflow-y-auto max-h-[515px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-
+          className="overflow-y-auto max-h-[515px] overflow-x-hidden scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50" // Reduced max-h-
           style={{
             scrollbarWidth: 'thin', // For Firefox
           }}
@@ -152,7 +152,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
                 key={index}
                 variants={itemVariants}
                 whileHover={{ scale: 1.02 }}
-                className="w-full max-w-[600px] bg-gradient-to-b from-gray-800 to-gray-900 text-white flex lg:flex-row flex-col rounded-xl overflow-hidden shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300"
+                className="w-full max-w-[610px] bg-gradient-to-b from-gray-800 to-gray-900 text-white flex lg:flex-row flex-col rounded-xl overflow-hidden shadow-2xl border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300"
               >
                 <div
                   className="relative flex-shrink-0 w-full md:w-[200px] justify-center items-center flex lg:w-[250px] group" // Reduced width
@@ -175,7 +175,7 @@ export default function YouTubePlaylist({ playlists }: YouTubePlaylistProps) {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: hoveredIndex === index ? 1 : 0 }}
-                      className="absolute inset-0 bg-black/75 flex items-center justify-center backdrop-blur-sm"
+                      className="absolute inset-0  bg-black/75 flex items-center justify-center backdrop-blur-sm"
                     >
                       <motion.div
                         whileHover={{ scale: 1.1 }}

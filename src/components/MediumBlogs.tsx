@@ -125,7 +125,7 @@ export default function MediumBlogs({ blogs }: MediumBlogsProps) {
 
         {/* Scrollable Container */}
         <div
-          className="overflow-y-auto max-h-[565px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50"
+          className="overflow-y-auto overflow-x-hidden max-h-[600px] scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50"
           style={{
             scrollbarWidth: "thin", // For Firefox
           }}

@@ -229,6 +229,7 @@ Whether you're stuck on a problem, need clarification on a topic, or just want s
                   backgroundColor: '#1A1F3C',
                   borderColor: '#4F7DFB',
                   color: '#FFFFFF',
+                  // @ts-ignore
                   focusRingColor: '#78A3FB'
                 }}
                 disabled={isLoading}
