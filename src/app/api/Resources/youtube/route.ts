@@ -108,18 +108,17 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       query,
     });
 
-  } catch (error: any) {
-    console.error("❌ YouTube API/Server error:", error.response?.data || error.message || error);
+   } catch (error: any) {
+    const errorMessage = error.response?.data || error.message || error;
+    console.error("❌ YouTube API Error:", errorMessage);
 
     return NextResponse.json(
       {
         error: "Failed to fetch YouTube playlists",
-        details:
-          process.env.NODE_ENV === "development"
-            ? error.message
-            : undefined,
+        details: errorMessage, // include always for debugging
       },
       { status: 500 }
     );
   }
+
 }
