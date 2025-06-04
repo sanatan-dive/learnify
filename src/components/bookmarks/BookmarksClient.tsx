@@ -22,7 +22,7 @@ interface BookmarksProps {
   initialBookmarks?: Bookmark[];
 }
 
-function Bookmarks({ initialBookmarks = [] }: BookmarksProps) {
+export default function Bookmarks({ initialBookmarks = [] }: BookmarksProps) {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks);
   const [loading, setLoading] = useState(!initialBookmarks.length);
   const [error, setError] = useState<string | null>(null);
@@ -245,4 +245,3 @@ function Bookmarks({ initialBookmarks = [] }: BookmarksProps) {
   );
 }
 
-export default Bookmarks

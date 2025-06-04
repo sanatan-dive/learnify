@@ -1,7 +1,5 @@
-import dynamic from 'next/dynamic';
+import BookmarksClient from "@/components/bookmarks/BookmarksClient";
 
-const Bookmarks = dynamic(() => import('@/components/bookmarks/Bookmarks'), { ssr: false });
-
-export default function Page() {
-  return <Bookmarks />;
+export default function BookmarksPage() {
+  return <BookmarksClient />;
 }
