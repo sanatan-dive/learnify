@@ -188,6 +188,7 @@ function Bookmarks({ initialBookmarks = [] }: BookmarksProps) {
                         ? bookmark.courseraCourse?.description || bookmark.udemyCourse?.description || 'No description'
                         : truncateDescription(bookmark.courseraCourse?.description || bookmark.udemyCourse?.description || 'No description', 15)}
                     </p>
+                    {/* @ts-ignore */}
                     {(bookmark.courseraCourse?.description?.split(" ").length > 15 || bookmark.udemyCourse?.description?.split(" ").length > 15) && (
                       <button
                         onClick={() => toggleDescription(bookmark.id)}
@@ -244,4 +245,4 @@ function Bookmarks({ initialBookmarks = [] }: BookmarksProps) {
   );
 }
 
-export default Bookmarks;
+export default Bookmarks
