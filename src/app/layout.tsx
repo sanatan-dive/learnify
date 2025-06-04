@@ -39,7 +39,7 @@ export default function RootLayout({
             </div>
           </SidebarComponent>
           
-          {/* Add Toaster component here */}
+          
           <Toaster 
             position="top-right"
             toastOptions={{
