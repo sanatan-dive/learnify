@@ -67,7 +67,7 @@ export default function QuizPage() {
 
   const fetchQuizRecords = async () => {
     try {
-      const response = await fetch(`/api/Features/Quiz/quiz-records?userId=${userId}`, {
+      const response = await fetch(`/api/Features/quiz-records?userId=${userId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
