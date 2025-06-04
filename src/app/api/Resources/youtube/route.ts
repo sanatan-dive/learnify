@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 interface PlaylistData {
-  query: string; // Adding query as part of the Playlist data
+  query: string;
   title: string;
   link: string;
   thumbnail: string;
@@ -23,8 +23,13 @@ interface ApiError {
   details?: string;
 }
 
-const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || "";
+// Ensure env vars are present
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const YOUTUBE_API_URL = process.env.YOUTUBE_API_URL || "https://www.googleapis.com/youtube/v3/search";
+
+if (!YOUTUBE_API_KEY && process.env.NODE_ENV === "development") {
+  console.warn("⚠️ Missing YOUTUBE_API_KEY environment variable.");
+}
 
 export async function GET(request: Request): Promise<NextResponse<ApiResponse | ApiError>> {
   try {
@@ -38,7 +43,7 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       );
     }
 
-    // Check if the query exists in the database
+    // Check DB first
     const existingPlaylists = await prisma.playlist.findMany({ where: { query } });
     if (existingPlaylists.length > 0) {
       return NextResponse.json({
@@ -48,7 +53,15 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       });
     }
 
-    // Fetch playlists from the YouTube API
+    // Check API key presence
+    if (!YOUTUBE_API_KEY) {
+      return NextResponse.json(
+        { error: "Missing YouTube API Key on server" },
+        { status: 500 }
+      );
+    }
+
+    // Fetch from YouTube
     const response = await axios.get(YOUTUBE_API_URL, {
       params: {
         part: "snippet",
@@ -60,33 +73,33 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
     });
 
     const playlists: PlaylistData[] = response.data.items.map((item: any) => ({
-      query, // Storing the query in the Playlist data
+      query,
       title: item.snippet.title,
       link: `https://www.youtube.com/playlist?list=${item.id.playlistId}`,
-      thumbnail: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.default?.url,
+      thumbnail: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.default?.url || "",
       channel: item.snippet.channelTitle,
     }));
 
-    // Save playlists to the database
+    // Save to DB
     const savedPlaylists = await Promise.all(
-      playlists.map(async (playlist) => {
-        return prisma.playlist.upsert({
+      playlists.map((playlist) =>
+        prisma.playlist.upsert({
           where: { link: playlist.link },
           update: {
             title: playlist.title,
             thumbnail: playlist.thumbnail,
             channel: playlist.channel,
-            query: playlist.query, // Include the query in the update as well
+            query: playlist.query,
           },
           create: {
-            query: playlist.query, // Include the query in the create operation
             title: playlist.title,
             link: playlist.link,
             thumbnail: playlist.thumbnail,
             channel: playlist.channel,
+            query: playlist.query,
           },
-        });
-      })
+        })
+      )
     );
 
     return NextResponse.json({
@@ -94,14 +107,16 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       timestamp: new Date().toISOString(),
       query,
     });
-  } catch (error) {
-    console.error("YouTube API error:", error);
+
+  } catch (error: any) {
+    console.error("❌ YouTube API/Server error:", error.response?.data || error.message || error);
+
     return NextResponse.json(
       {
         error: "Failed to fetch YouTube playlists",
         details:
           process.env.NODE_ENV === "development"
-            ? (error as Error).message
+            ? error.message
             : undefined,
       },
       { status: 500 }
