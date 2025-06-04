@@ -1,4 +1,3 @@
-// pages/api/generate-quiz.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from "@clerk/nextjs/server";
 import { PrismaClient } from '@prisma/client';
