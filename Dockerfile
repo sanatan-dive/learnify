@@ -28,9 +28,21 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Set Prisma env (for build time)
+# Environment variables passed during build
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
+
+ARG COURSERA_API_KEY
+ENV COURSERA_API_KEY=$COURSERA_API_KEY
+
+ARG COURSERA_API_URL
+ENV COURSERA_API_URL=$COURSERA_API_URL
+
+ARG YOUTUBE_API_KEY
+ENV YOUTUBE_API_KEY=$YOUTUBE_API_KEY
+
+ARG YOUTUBE_API_URL
+ENV YOUTUBE_API_URL=$YOUTUBE_API_URL
 
 ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
@@ -38,23 +50,41 @@ ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 ARG CLERK_SECRET_KEY
 ENV CLERK_SECRET_KEY=$CLERK_SECRET_KEY
 
-# Copy Prisma schema first
+ARG GEMINI_API_KEY
+ENV GEMINI_API_KEY=$GEMINI_API_KEY
+
+ARG RAZORPAY_KEY_SECRET
+ENV RAZORPAY_KEY_SECRET=$RAZORPAY_KEY_SECRET
+
+ARG RAZORPAY_KEY_ID
+ENV RAZORPAY_KEY_ID=$RAZORPAY_KEY_ID
+
+ARG DEFAULT_RAZORPAY_PLAN_ID
+ENV DEFAULT_RAZORPAY_PLAN_ID=$DEFAULT_RAZORPAY_PLAN_ID
+
+ARG HUGGING_FACE_API_TOKEN
+ENV HUGGING_FACE_API_TOKEN=$HUGGING_FACE_API_TOKEN
+
+ARG OPENROUTER_API_KEY
+ENV OPENROUTER_API_KEY=$OPENROUTER_API_KEY
+
+# Copy Prisma schema first to take advantage of Docker cache
 COPY prisma ./prisma
 
-# Copy package files first and install deps
+# Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Generate Prisma client before build
+# Generate Prisma client
 RUN npx prisma generate
 
-# Then copy the rest of your app
+# Copy rest of the code
 COPY . .
 
-# Build the nextjs
+# Build the app
 RUN npm run build
 
-# Expose Next.js default port
+# Expose Next.js port
 EXPOSE 3000
 
 # Run the app
