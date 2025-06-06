@@ -4,15 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, CheckCircle, XCircle, Target, Award, Brain, TrendingUp, BookOpen, Plus, ChevronRight, Clock, Trophy, Star, ArrowLeft } from 'lucide-react';
-
-import { Prisma } from '@prisma/client';
-import { getAuth } from '@clerk/nextjs/server';
 import { useUser } from '@clerk/nextjs';
 
-const getCurrentUserId = () => {
-  // Replace this with your actual authentication logic
-  return "user-id-from-auth"; // Example user ID (or null if not authenticated)
-};
+
 
 interface QuizQuestion {
   question: string;
