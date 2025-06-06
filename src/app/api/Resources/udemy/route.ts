@@ -87,7 +87,7 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       timeout: 15000 
     });
 
-    await page.waitForSelector(SELECTORS.courseCard, { timeout: 10000 });
+    await page.waitForSelector(SELECTORS.courseCard, { timeout: 20000 });
 
     const courses: CourseData[] = await page.evaluate((selectors, query) => {
       return Array.from(
