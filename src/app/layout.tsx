@@ -26,23 +26,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
-  // Safety check for missing publishable key during build
-  if (!publishableKey) {
-    console.warn('NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is missing');
-    // Return basic layout without Clerk during build/prerendering
-    return (
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <div className="flex items-center justify-center min-h-screen bg-slate-950 text-white">
-            <div className="text-center">
-              <h1 className="text-2xl font-bold mb-4">Configuration Required</h1>
-              <p>Clerk configuration is missing. Please check your environment variables.</p>
-            </div>
-          </div>
-        </body>
-      </html>
-    );
-  }
+
 
   return (
     <ClerkProvider publishableKey={publishableKey}>
