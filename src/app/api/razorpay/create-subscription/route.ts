@@ -2,12 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 import { PrismaClient } from "@prisma/client";
 import { SubscriptionStatus } from '@prisma/client';
-import { createRazorpayInstance } from '@/lib/razorpay';
 
 const prisma = new PrismaClient();
-
-// Initialize Razorpay with environment variables
-const razorpay = createRazorpayInstance();
 
 // Define interface for request body
 interface SubscriptionRequest {
@@ -17,13 +13,19 @@ interface SubscriptionRequest {
 
 export async function POST(req: NextRequest) {
   try {
+    // Create Razorpay instance inside the handler
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID!,
+      key_secret: process.env.RAZORPAY_KEY_SECRET!,
+    });
+
     // Parse request body
     const { userId, planId = process.env.DEFAULT_RAZORPAY_PLAN_ID } = await req.json() as SubscriptionRequest;
-    
+
     if (!planId) {
       console.error('Plan ID is required. Set DEFAULT_RAZORPAY_PLAN_ID env variable or provide planId in request.');
       return NextResponse.json(
-        { error: 'Plan ID is required. Set DEFAULT_RAZORPAY_PLAN_ID env variable or provide planId in request.' }, 
+        { error: 'Plan ID is required. Set DEFAULT_RAZORPAY_PLAN_ID env variable or provide planId in request.' },
         { status: 400 }
       );
     }
@@ -34,7 +36,7 @@ export async function POST(req: NextRequest) {
       console.log('User not found');
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-    
+
     if (!user.email) {
       console.log('User email is required');
       return NextResponse.json({ error: 'User email is required' }, { status: 400 });
@@ -43,38 +45,35 @@ export async function POST(req: NextRequest) {
     try {
       // Create or retrieve customer
       let customerId = user.razorpayCustomerId;
-      
-     if (!customerId) {
-  try {
-    const customer = await razorpay.customers.create({
-      name: user.firstName || 'Learnify User',
-      email: user.email,
-    });
-    customerId = customer.id;
 
-    // Save it immediately
-    await prisma.user.update({
-      where: { id: userId },
-      data: { razorpayCustomerId: customerId }
-    });
+      if (!customerId) {
+        try {
+          const customer = await razorpay.customers.create({
+            name: user.firstName || 'Learnify User',
+            email: user.email,
+          });
+          customerId = customer.id;
 
-  } catch (error: any) {
-    if (error?.error?.code === 'BAD_REQUEST_ERROR' && error?.error?.description?.includes('Customer already exists')) {
-      console.log('Customer already exists. Please retry or fix duplicate emails in DB.');
-      return NextResponse.json(
-        { error: 'Customer already exists. Please retry or fix duplicate emails in DB.' },
-        { status: 400 }
-      );
-    }
-
-    console.error('Failed to create customer:', error);
-    return NextResponse.json(
-      { error: 'Failed to create Razorpay customer', details: error },
-      { status: 500 }
-    );
-  }
-}
-
+          // Save it immediately
+          await prisma.user.update({
+            where: { id: userId },
+            data: { razorpayCustomerId: customerId }
+          });
+        } catch (error: any) {
+          if (error?.error?.code === 'BAD_REQUEST_ERROR' && error?.error?.description?.includes('Customer already exists')) {
+            console.log('Customer already exists. Please retry or fix duplicate emails in DB.');
+            return NextResponse.json(
+              { error: 'Customer already exists. Please retry or fix duplicate emails in DB.' },
+              { status: 400 }
+            );
+          }
+          console.error('Failed to create customer:', error);
+          return NextResponse.json(
+            { error: 'Failed to create Razorpay customer', details: error },
+            { status: 500 }
+          );
+        }
+      }
 
       // Create subscription using type assertion to bypass TypeScript error
       const subscription = await razorpay.subscriptions.create({
@@ -95,25 +94,25 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      return NextResponse.json({ 
+      return NextResponse.json({
         success: true,
         subscription: {
           id: subscription.id,
           status: subscription.status,
           shortUrl: subscription.short_url // Payment link the user can be redirected to
-        } 
+        }
       });
     } catch (razorpayError) {
       console.error('Razorpay API error:', razorpayError);
       return NextResponse.json(
-        { error: 'Failed to create subscription', details: razorpayError }, 
+        { error: 'Failed to create subscription', details: razorpayError },
         { status: 500 }
       );
     }
   } catch (error) {
     console.error('Server error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' }, 
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
