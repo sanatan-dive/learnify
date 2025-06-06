@@ -18,18 +18,16 @@ interface LinkButtonProps {
   children: React.ReactNode;
 }
 
-interface BookmarksProps {
-  initialBookmarks?: Bookmark[];
-}
 
-export default function Bookmarks({ initialBookmarks = [] }: BookmarksProps) {
-  const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks);
-  const [loading, setLoading] = useState(!initialBookmarks.length);
+
+export default function Bookmarks() {
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>();
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedDescriptions, setExpandedDescriptions] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
-    if (initialBookmarks.length) return;
+  
     async function fetchBookmarks() {
       try {
         const response = await axios.get("/api/Features/bookmark");
@@ -42,11 +40,11 @@ export default function Bookmarks({ initialBookmarks = [] }: BookmarksProps) {
       }
     }
     fetchBookmarks();
-  }, [initialBookmarks]);
+  }, []);
 
-  const playlists = bookmarks.filter((bookmark) => bookmark.playlist);
-  const courses = bookmarks.filter((bookmark) => bookmark.courseraCourse || bookmark.udemyCourse);
-  const blogs = bookmarks.filter((bookmark) => bookmark.blog);
+  const playlists = bookmarks?.filter((bookmark) => bookmark.playlist) || [];
+  const courses = bookmarks?.filter((bookmark) => bookmark.courseraCourse || bookmark.udemyCourse) || [];
+  const blogs = bookmarks?.filter((bookmark) => bookmark.blog) || [];
 
   const truncateDescription = (description: string, wordLimit: number) => {
     const words = description.split(" ");
@@ -244,4 +242,3 @@ export default function Bookmarks({ initialBookmarks = [] }: BookmarksProps) {
     </div>
   );
 }
-
