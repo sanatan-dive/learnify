@@ -28,12 +28,19 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
+# Set Prisma env (for build time)
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
 # Copy Prisma schema first
 COPY prisma ./prisma
 
 # Copy package files first and install deps
 COPY package*.json ./
 RUN npm install
+
+# Generate Prisma client before build
+RUN npx prisma generate
 
 # Then copy the rest of your app
 COPY . .
