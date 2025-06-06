@@ -24,9 +24,9 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
- console.log("publishableKey",process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) 
+//  console.log("publishableKey",process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) 
   return (
-    <ClerkProvider publishableKey="pk_live_Y2xlcmsubGVhcm4taWZ5Lm1lJA">
+    <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
       
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
