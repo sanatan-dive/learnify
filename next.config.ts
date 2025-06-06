@@ -13,11 +13,6 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
-  // Skip static generation for problematic pages
-  experimental: {
-    missingSuspenseWithCSRBailout: false,
-  },
-
   // Force dynamic rendering for pages with authentication
   output: 'standalone',
 

@@ -111,7 +111,7 @@ export const SidebarComponent = ({ isLoading, children }: SidebarComponentProps)
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <SignInButton >
+                <SignInButton>
                   <Button variant="destructive" onClick={() => setShowSigninDialog(false)}>Sign In</Button>
                 </SignInButton>
               </DialogFooter>
