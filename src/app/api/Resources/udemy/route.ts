@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { setupPuppeteer } from "@/utils/puppeteer";
 import { PrismaClient } from "@prisma/client";
-import type { Page, Browser } from "puppeteer";
+import type { Page, Browser } from "puppeteer-core";
 
 const prisma = new PrismaClient();
 
@@ -70,11 +70,12 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
     }
 
     const puppeteer = setupPuppeteer();
+    // @ts-ignore
     browser = await puppeteer.launch({ 
       headless: true,
       args: ["--no-sandbox", "--disable-gpu"]
     });
-
+// @ts-ignore
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
     await page.setViewport({ width: 1920, height: 1080 });
@@ -143,16 +144,17 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
       query,
     });
 
-  } catch (error) {
-    console.error("Scraping error:", error);
-    return NextResponse.json(
-      {
-        error: "Failed to fetch courses",
-        details: process.env.NODE_ENV === "development" ? (error as Error).message : undefined,
-      },
-      { status: 500 }
-    );
-  } finally {
+ } catch (error: any) {
+  console.error("❌ Scraping error:", error?.message || error);
+
+  return NextResponse.json(
+    {
+      error: "Failed to fetch courses",
+      details: error?.message || String(error),
+    },
+    { status: 500 }
+  );
+}finally {
     if (browser) {
       await browser.close().catch(console.error);
     }

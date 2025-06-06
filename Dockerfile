@@ -1,32 +1,48 @@
-# Use an official Node.js runtime as the base image
-FROM node:20-alpine
+# Use Node base image
+FROM node:18-slim
 
-# Install necessary packages for Puppeteer
-RUN apk add --no-cache \
+# Install Chromium dependencies for Puppeteer
+RUN apt-get update && apt-get install -y \
     chromium \
-    nss \
-    freetype \
-    freetype-dev \
-    harfbuzz \
     ca-certificates \
-    ttf-freefont
+    fonts-liberation \
+    libappindicator3-1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libgdk-pixbuf2.0-0 \
+    libnspr4 \
+    libnss3 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    xdg-utils \
+    wget \
+    --no-install-recommends && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy Prisma schema first
+COPY prisma ./prisma
+
+# Copy package files first and install deps
 COPY package*.json ./
 RUN npm install
 
-# Copy the entire project
+# Then copy the rest of your app
 COPY . .
 
-# Set environment variables for Puppeteer
-ENV PUPPETEER_EXECUTABLE_PATH="/usr/bin/chromium-browser"
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
+# Build the nextjs
+RUN npm run build
 
-# Expose the port Next.js runs on
+# Expose Next.js default port
 EXPOSE 3000
 
-# Start the Next.js application
+# Run the app
 CMD ["npm", "run", "start"]

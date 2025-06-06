@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { setupPuppeteer } from '@/utils/puppeteer';
 import { PrismaClient } from "@prisma/client";
-import type { Page, Browser } from 'puppeteer';
+import type { Page, Browser } from 'puppeteer-core';
 
 const prisma = new PrismaClient();
 
@@ -85,6 +85,7 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
     const puppeteer = setupPuppeteer();
     // @ts-ignore
     browser = await puppeteer.launch(BROWSER_CONFIG);
+    // @ts-ignore
     const page = await browser.newPage();
 
     await setupPage(page);
@@ -148,7 +149,7 @@ export async function GET(request: Request): Promise<NextResponse<ApiResponse | 
             title, 
             link, 
             author: author || altAuthor, // Use altAuthor as fallback if author is null/undefined
-            description: altAuthor // You might want to use this as description instead
+            description: altAuthor 
           });
         }
       }

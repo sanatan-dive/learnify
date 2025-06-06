@@ -1,26 +1,40 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  //@ts-ignore
+  // @ts-ignore
   webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.externals = [
-        ...(config.externals || []),
-        "puppeteer",
-        "puppeteer-extra",
-        "puppeteer-extra-plugin-stealth",
-      ];
+    if (!isServer) {
+      // Avoid bundling these packages in the client
+      config.externals.push("chrome-aws-lambda");
+    } else {
+      // Optional: ignore Puppeteer source map warnings
+      config.module.rules.push({
+        test: /\.map$/,
+        use: 'ignore-loader',
+      });
     }
+
     return config;
   },
-  // Use `serverExternalPackages` instead of `experimental.serverComponentsExternalPackages`
+
+  // Keep puppeteer-related packages server-side only
   serverExternalPackages: [
-    "puppeteer-core",
     "puppeteer",
+    "puppeteer-core",
     "puppeteer-extra",
     "puppeteer-extra-plugin-stealth",
+    "chrome-aws-lambda",
   ],
+
   images: {
-    domains: ['i.ytimg.com','d3njjcbhbojbot.cloudfront.net','img-c.udemycdn.com','miro.medium.com','assets.aceternity.com','img.clerk.com','yt3.ggpht.com'], 
+    domains: [
+      'i.ytimg.com',
+      'd3njjcbhbojbot.cloudfront.net',
+      'img-c.udemycdn.com',
+      'miro.medium.com',
+      'assets.aceternity.com',
+      'img.clerk.com',
+      'yt3.ggpht.com'
+    ],
   },
 };
 
