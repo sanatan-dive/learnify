@@ -4,11 +4,10 @@ import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { IconArrowLeft, IconArrowRight, IconBook, IconBookmark, IconClock, IconHome, IconQuestionMark, IconSearch } from "@tabler/icons-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useUser, SignOutButton, SignInButton } from "@clerk/nextjs";
+import { useUser, SignOutButton, SignInButton, } from "@clerk/nextjs";
 import { Logo, LogoIcon } from "@/components/Logo";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog"; 
 import { Button } from "@/components/ui/button"; 
-import { GiTomato } from "react-icons/gi";
 
 
 interface SidebarComponentProps {
